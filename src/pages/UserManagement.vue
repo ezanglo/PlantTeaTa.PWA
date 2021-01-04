@@ -3,7 +3,7 @@
     <q-card>
       <q-table
         title="User Management"
-        :data="(allUsers)?allUsers:[]"
+        :data="allUsers"
         :hide-header="mode === 'grid'"
         :columns="columns"
         row-key="name"

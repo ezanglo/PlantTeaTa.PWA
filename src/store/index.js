@@ -4,6 +4,7 @@ import { vuexfireMutations } from 'vuexfire'
 
 import auth from './auth'
 import user from './user'
+import product from './product'
 
 Vue.use(Vuex)
 
@@ -16,7 +17,8 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       auth,
-      user
+      user,
+      product
     },
     mutations: {
       ...vuexfireMutations

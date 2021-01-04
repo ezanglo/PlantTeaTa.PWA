@@ -1,5 +1,7 @@
-export default function () {
-  return {
-    //
-  }
+export default {
+  allProducts: [],
+  productPrices: [],
+  productCategories: [],
+  productTypes: [],
+  productDialog: false
 }

@@ -1,5 +1,5 @@
 export default {
-  allUsers: null,
+  allUsers: [],
   currentUser: null,
   editUserDialog: false
 }

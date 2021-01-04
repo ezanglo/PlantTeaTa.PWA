@@ -38,26 +38,37 @@ export const storageRef = (storageLocation) => {
   return firebase.storage().ref(storageLocation)
 }
 
-export const addDocument = (collectionName, data, callback) => {
-  firestore().collection(collectionName).add(data)
-  .then(function() {
-    if(callback){
-      callback()
-    }
-  })
+export const addDocument = (collectionName, data) => {
+  return firestore().collection(collectionName).add(data)
 }
 
 export const getDocument = (collectionName, id) => {
   return firestore().collection(collectionName).doc(id)
 }
 
-export const getCollection = (collectionName) => {
-  return firestore().collection(collectionName).get()
+export const getCollection = (collectionName, where) => {
+  let collectionRef = firestore().collection(collectionName);
+  if(where){
+    collectionRef = firestore().collection(collectionName).where(where.field, where.condition, where.value);
+  }
+  return collectionRef.get()
     .then(function(collection) {
       return collection.docs.map(doc => {
+        return {
+          ...doc.data(),
+          id: doc.id
+        }
+      })
+    })
+}
+
+export const getSubCollection = (doc, subCollectionName) => {
+  return doc.ref.collection(subCollectionName).get()
+    .then(function(sub_collection){
+      return sub_collection.docs.map(doc => {
         return doc.data()
       });
-    })
+    });
 }
 
 export const updateDocument = (collectionName, data) => {
