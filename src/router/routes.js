@@ -22,7 +22,15 @@ const routes = [
       {
         path: 'product_management',
         name: 'Product Management',
-        component: () => import('pages/ProductManagement.vue'),
+        component: () => import('pages/product/ProductManagement.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'products',
+        name: 'Products',
+        component: () => import('pages/product/Products.vue'),
         meta: {
           requiresAuth: true
         }

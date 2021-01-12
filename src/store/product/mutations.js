@@ -1,9 +1,17 @@
 export const setAllProducts = (state, allProducts) => {
-  state.allProducts = allProducts
+  state.allProducts = allProducts.map(product => {
+    return {
+      ...product,
+      productPrices:[]
+    }
+  })
 }
 
 export const addNewProduct = (state, product) => {
-  state.allProducts.push(product)
+  state.allProducts.push({
+    ...product,
+    productPrices: []
+  })
 }
 
 export const deleteProduct = (state, id) => {
@@ -15,7 +23,31 @@ export const deleteProduct = (state, id) => {
   })
 }
 
-export const updateproduct = (state, payload) => {
+export const addProductPrice = (state, productPrice) => {
+  state.allProducts.forEach(function(product) {
+    if(product.id == productPrice.productId){
+      product.productPrices = [
+        ...product.productPrices,
+        productPrice
+      ]
+    }
+  })
+}
+
+export const deleteProductPrice = (state, id) => {
+  state.allProducts.forEach(function(product) {
+    if(product.hasOwnProperty('productPrices'))
+    {
+      product.productPrices.forEach((price, index) => {
+        if(price.id == id){
+          product.productPrices.splice(index, 1)
+        }
+      })
+    }
+  })
+}
+
+export const updateProduct = (state, payload) => {
   state.allProducts.forEach(function(product) {
     if(product.id == payload.id){
       product.productName = payload.productName;
@@ -28,26 +60,19 @@ export const updateproduct = (state, payload) => {
 }
 
 export const setProductPrices = (state, productPrices) => {
-  let allProducts = []
   state.allProducts.forEach(product => {
-    const prices = []
-    productPrices.forEach(price => {
-      if(price.productId == product.id){
-        prices.push(price);
-      }
-    });
-    allProducts.push({
-      ...product,
-      productPrice: prices
-    })
-  });
-
-  state.allProducts = allProducts;
+    let product_prices = productPrices.filter(e => { return e.productId == product.id });
+    product.productPrices = product_prices
+  })
   state.productPrices = productPrices
 }
 
 export const setProductCategories = (state, productCategories) => {
   state.productCategories = productCategories
+}
+
+export const setProductSizes = (state, productSizes) => {
+  state.productSizes = productSizes
 }
 
 export const setProductTypes = (state, productTypes) => {
