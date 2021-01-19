@@ -64,46 +64,25 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="bg-grey-1" >
       <q-list>
-        <q-item to="/" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="eva-bar-chart"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Dashboard</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/user_management" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="eva-people-outline"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Users</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/product_management" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="eva-pricetags-outline"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Products</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/categories" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="eva-options-2-outline"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Categories</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/sizes" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="eva-move-outline"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Sizes</q-item-label>
-          </q-item-section>
-        </q-item>
+        <template v-for="(menuItem, index) in menuList">
+          <q-item 
+            v-ripple
+            clickable 
+            :key="index" 
+            :active="activeMenu === menuItem.label" 
+            @click="activeMenu = menuItem.label"
+            :to="menuItem.route"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section avatar>
+              <q-icon :name="menuItem.icon" />
+            </q-item-section>
+            <q-item-section>
+              {{ menuItem.label }}
+            </q-item-section>
+          </q-item>
+          <q-separator :key="'sep' + index"  v-if="menuItem.separator" />
+        </template>
       </q-list>
 
     </q-drawer>
@@ -121,6 +100,44 @@ import Messages from "./Messages";
 
 export default {
   name: 'MainLayout',
+  data () {
+    return {
+      leftDrawerOpen: false,
+      activeMenu: 'Dashboard',
+      menuList: [
+        {
+          icon: 'eva-bar-chart',
+          label: 'Dashboard',
+          route: '/',
+          separator: false
+        },
+        {
+          icon: 'eva-people-outline',
+          label: 'Users',
+          route: '/user_management',
+          separator: false
+        },
+        {
+          icon: 'eva-pricetags-outline',
+          label: 'Products',
+          route: '/product_management',
+          separator: true
+        },
+        {
+          icon: 'settings',
+          label: 'Settings',
+          route: '/settings',
+          separator: false
+        },
+        {
+          icon: 'eva-pricetags-outline',
+          label: 'Ordering System',
+          route: '/order/menu',
+          separator: false
+        },
+      ]
+    }
+  },
   components: {
     Messages
   },
@@ -129,11 +146,6 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['logoutUser'])
-  },
-  data () {
-    return {
-      leftDrawerOpen: false
-    }
-  },
+  }
 }
 </script>

@@ -18,3 +18,7 @@ export const updateUser = (data) => {
 export const deleteUser = (id) => {
     db.deleteDocument(collectionName, id)
 }
+
+export const getUserCart = function(userId) {
+    return db.getCollection('users/' + userId + '/cart')
+}

@@ -55,3 +55,19 @@ export const deleteProductPrice = async function ({ commit }, id) {
   await productService.deleteProductPrice(id)
   commit('deleteProductPrice', id);
 }
+
+/** Product Category */
+export const addProductCategory = async function ({ state, commit }, payload) {
+  await productService.insertProductCategory(payload)
+  commit('addProductCategory', { ...payload, id: doc.id });
+}
+
+export const updateProductCategory = async function ({ state, commit }, payload) {
+  await productService.updateProductCategory(payload)
+  commit('updateProductCategory', payload);
+}
+
+export const deleteProductCategory = async function ({ commit }, id) {
+  await productService.deleteProductCategory(id)
+  commit('deleteProductCategory', id);
+}

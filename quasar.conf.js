@@ -21,7 +21,8 @@ module.exports = function (/* ctx */) {
     boot: [
       'i18n',
       'serverConnection',
-      'filters'
+      'filters',
+      'iconPicker'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -31,7 +32,7 @@ module.exports = function (/* ctx */) {
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
-      // 'ionicons-v4',
+      'ionicons-v4',
       // 'mdi-v5',
       'fontawesome-v5',
       'eva-icons',
@@ -169,6 +170,7 @@ cfg.module.rules.push({
       bundler: 'packager', // 'packager' or 'builder'
 
       packager: {
+        platform: 'win32'
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
 
         // OS X / Mac App Store

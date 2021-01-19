@@ -10,12 +10,13 @@
         row-key="name"
         :grid="mode=='grid'"
         :filter="filter"
+        :filter-method="customFilter"  
         :pagination.sync="pagination"
       >
         <template v-slot:top-right="props">
           <q-btn @click="showProductDialog({}, 'Add Product')" outline color="primary" label="Add New" class="q-mr-xs"/>
 
-          <q-input outlined dense debounce="300" v-model="filter" placeholder="Search">
+          <q-input outlined dense debounce="300" v-model="filters.search" placeholder="Search">
             <template v-slot:append>
               <q-icon name="search"/>
             </template>
@@ -35,21 +36,9 @@
             >{{props.inFullscreen ? 'Exit Fullscreen' : 'Toggle Fullscreen'}}
             </q-tooltip>
           </q-btn>
-
-          <q-btn
-            flat
-            round
-            dense
-            :icon="mode === 'grid' ? 'list' : 'grid_on'"
-            @click="mode = mode === 'grid' ? 'list' : 'grid'; separator = mode === 'grid' ? 'none' : 'horizontal'"
-            v-if="!props.inFullscreen"
-          >
-            <q-tooltip
-              :disable="$q.platform.is.mobile"
-              v-close-popup
-            >{{mode==='grid' ? 'List' : 'Grid'}}
-            </q-tooltip>
-          </q-btn>
+          
+          <q-select label="Types" v-model="filters.type" :options="productTypes" class="q-mr-sm" style="width:20vh" dense clearable outlined />
+          <q-select label="Categories" v-model="filters.category" :options="productCategories" option-value="name" option-label="name" style="width:20vh" dense clearable outlined/>
         </template>
         <template v-slot:body-cell-price="props">
           <q-td :props="props" style="min-width:15em">
@@ -82,13 +71,6 @@
                 <q-btn round dense flat icon="add" @click.stop="showAddProductPriceDialog(props.row)" />
               </template>
             </q-select>
-            <!-- <q-item class="row">
-            <div class="column">
-            <q-chip removable outline align="middle" color="teal" v-for="price in props.row.productPrices" :key="price.id">
-              {{ price.productPrice | toCurrency }} per {{price.productSize}}
-            </q-chip>
-            </div>
-            </q-item> -->
           </q-td>
         </template>
         <template v-slot:body-cell-action="props">
@@ -178,7 +160,7 @@
 </template>
 
 <script>
-import {exportFile} from "quasar";
+
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
@@ -187,12 +169,16 @@ export default {
   },
   data() {
     return {
-      filter: "",
       customer: {},
       mode: "list",
+      filters: {
+        search: '',
+        type: null,
+        category: null
+      },
       columns: [
         {
-          name: "product_name",
+          name: "productName",
           required: true,
           label: "Product",
           align: "left",
@@ -200,14 +186,14 @@ export default {
           sortable: true
         },
         {
-          name: "product_category",
+          name: "productCategory",
           align: "left",
           label: "Category",
           field: "productCategory",
           sortable: true
         },
         {
-          name: "product_type",
+          name: "productType",
           align: "left",
           label: "Type",
           field: "productType",
@@ -230,7 +216,7 @@ export default {
       ],
       pagination: {
         rowsPerPage: 10,
-        sortBy: "product_category"
+        sortBy: "productCategory"
       },
       currentProduct: {},
       confirmDialog: false,
@@ -248,6 +234,13 @@ export default {
   },
   computed: {
     ...mapGetters('product', ['allProducts', 'productCategories', 'productTypes', 'productPrices', 'productSizes']),
+    filter() {
+      return {
+        search: this.filters.search,
+        type: this.filters.type,
+        category: this.filters.category       
+      }
+    },
     productDialog: {
       get () {
         return this.$store.state.product.productDialog
@@ -264,7 +257,18 @@ export default {
             sizes.push(size.name)
           }
         })
-        return sizes
+        return sizes.sort((a, b) => {
+            let fa = a.toLowerCase(),
+                fb = b.toLowerCase();
+
+            if (fa < fb) {
+                return -1;
+            }
+            if (fa > fb) {
+                return 1;
+            }
+            return 0;
+        });
       }
     }
   },
@@ -327,6 +331,34 @@ export default {
     },
     setBlur () {
       this.$emit('setBlur')
+    },
+    customFilter(rows, terms){
+      // rows contain the entire data
+      // terms contains whatever you have as filter
+      
+      const searchlc = terms.search ? terms.search.toLowerCase() : ""
+
+      const filteredRows = rows.filter((row, i) => {
+
+        let type_filter = (terms.type) && terms.type == row.productType
+        let category_filter = (terms.category) && terms.category.categoryName == row.productCategory
+        let search_filter = (searchlc) && row.productName.toLowerCase().includes(searchlc)
+        
+        let match = (
+          !(terms.search) && 
+          !(terms.type) && 
+          !(terms.category)
+        )
+        
+        if((!terms.search || search_filter) && (!terms.type || type_filter) && (!terms.category || category_filter)){
+          match = true
+        }
+
+        return match
+
+      })
+
+      return filteredRows
     }
   }
 };

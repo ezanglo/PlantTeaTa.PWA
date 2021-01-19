@@ -373,8 +373,6 @@
           <q-carousel-slide :name="2" class="q-pa-none">
             <q-scroll-area class="fit">
               <q-card class="my-card">
-                <!-- <img :src="require('src/assets/lookgood.jpeg')"> -->
-
                 <q-card-section>
                   <div class="text-h6">Keep your schedule in the right time</div>
                   <div class="text-subtitle2">

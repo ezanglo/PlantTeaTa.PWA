@@ -25,3 +25,12 @@ export const getAllUsers = async function (context) {
 export const updateUserData = async function ({ state }, payload) {
   return userService.updateUser(payload)
 }
+
+/** Get all users from the firestore collection user
+ */
+export const getCurrentUserCart = async function (context, id) {
+  const currentUserId = context.state.currentUser.id;
+
+  const currentUserCart = await userService.getUserCart(currentUserId)
+  context.commit('setCurrentUserCart', currentUserCart);
+}

@@ -36,6 +36,14 @@ const routes = [
         }
       },
       {
+        path: 'settings',
+        name: 'Settings',
+        component: () => import('pages/Settings.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('pages/user/Profile.vue'),
@@ -64,6 +72,20 @@ const routes = [
         name: 'Register',
         component: () => import('pages/Auth.vue')
       }
+    ]
+  },
+  {
+    path: '/order',
+    component: () => import('layouts/OrderLayout.vue'),
+    meta: {
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('pages/order/OrderMenu.vue')
+      },
     ]
   }
 ]

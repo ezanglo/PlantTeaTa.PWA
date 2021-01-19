@@ -106,9 +106,9 @@ export default {
       let productCategoryFound = false;
       this.productCategoryNames = [];
       this.productCategories.forEach(category => {
-        if(category.product_type == this.productType){
-          this.productCategoryNames.push(category.name)
-          if(this.productCategory == category.name){
+        if(category.productType == this.productType){
+          this.productCategoryNames.push(category.categoryName)
+          if(this.productCategory == category.categoryName){
             productCategoryFound = true;
           }
         }

@@ -68,6 +68,9 @@ export const setProductPrices = (state, productPrices) => {
 }
 
 export const setProductCategories = (state, productCategories) => {
+  productCategories.sort(function(a, b){
+    return a.order - b.order
+  })
   state.productCategories = productCategories
 }
 
@@ -81,4 +84,19 @@ export const setProductTypes = (state, productTypes) => {
 
 export const setProductDialog = (state, productDialog) => {
   state.productDialog = productDialog
+}
+
+export const addProductCategory = (state, productCategory) => {
+  state.productCategories.push(productCategory)
+}
+
+export const updateProductCategory = (state, payload) => {
+  state.productCategories.forEach(function(category) {
+    if(category.id == payload.id){
+      category.categoryName = payload.categoryName;
+      category.productType = payload.productType;
+      category.categoryIcon = payload.categoryIcon;
+      return;
+    }
+  })
 }

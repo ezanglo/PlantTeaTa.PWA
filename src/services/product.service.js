@@ -15,10 +15,6 @@ export const getAllProductPrices = () => {
     return db.getCollection('product_price')
 }
 
-export const getProductCategories = () => {
-    return db.getCollection('product_categories')
-}
-
 export const getProductSizes = () => {
     return db.getCollection('product_sizes')
 }
@@ -45,4 +41,20 @@ export const insertProductPrice = (data) => {
 
 export const deleteProductPrice = (id) => {
     return db.deleteDocument('product_price', id)
+}
+
+export const getProductCategories = () => {
+    return db.getCollection('product_categories')
+}
+
+export const insertProductCategory = (data) => {
+    return db.addDocument('product_categories', data)
+}
+
+export const updateProductCategory = (data) => {
+    return db.updateDocument('product_categories', data)
+}
+
+export const deleteProductCategory = (id) => {
+    return db.deleteDocument('product_categories', id)
 }

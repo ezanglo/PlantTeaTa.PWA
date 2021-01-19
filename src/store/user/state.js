@@ -1,5 +1,6 @@
 export default {
   allUsers: [],
   currentUser: null,
-  editUserDialog: false
+  editUserDialog: false,
+  currentUserCart: []
 }
