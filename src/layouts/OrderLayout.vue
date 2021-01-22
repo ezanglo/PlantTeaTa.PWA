@@ -12,9 +12,9 @@
         <q-space/>
         
         <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn round dense flat color="white" icon="ion-cart" @click="cartDrawerOpen = !cartDrawerOpen">
-            <q-badge color="red" text-color="white" floating>
-              5
+          <q-btn round dense flat color="white" icon="ion-cart" @click="userCart = true">
+            <q-badge v-if="currentUserCart.length > 0" color="red" text-color="white" floating>
+              {{currentUserCart.length}}
             </q-badge>
             <q-tooltip>Cart</q-tooltip>
           </q-btn>
@@ -22,63 +22,18 @@
 
       </q-toolbar>
     </q-header>
-    <q-footer elevated>
-        <q-tabs 
-          v-model="tab" 
-          shrink 
-          stretch 
-          switch-indicator
-          indicator-color="blue"
-          active-color="blue"
-          class="bg-white text-black"
-          align="center"
-          >
-          <q-route-tab 
-              :icon="(category.categoryIcon)?category.categoryIcon:'extension'"
-              v-for="category in productCategories" 
-              :key="category.id" 
-              :to="{path: '/order/menu', query: { category: category.categoryName }}" 
-              :label="category.categoryName" 
-              exact replace
-          />
-        </q-tabs>
-    </q-footer>
-
-    <q-drawer 
-      v-model="cartDrawerOpen" 
-      side="right" 
-      show-if-above 
-      bordered 
-      behavior="mobile"
-      content-class="bg-grey-1" >
-      <q-item active>
-        <q-item-section avatar>
-          <q-icon name="ion-cart" />
-        </q-item-section>
-        <q-item-section class="text-h6">
-          Your Cart
-        </q-item-section>
-      </q-item>
-      <q-item v-for="product in currentUserCart" :key="product.id">
-        <q-item-section>
-          <q-item-label>{{product.productName}}</q-item-label>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>22oz</q-item-label>
-        </q-item-section>
-        <q-item-section style="width:20px">
-          <q-item-label>x2</q-item-label>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>P120</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-drawer>
-
+    <q-dialog 
+      v-model="userCart" 
+      full-height
+      :maximized="$q.screen.lt.sm?true:false" 
+      position="right"
+      transition-show="slide-left"
+      transition-hide="slide-right">
+        <user-cart/>
+    </q-dialog>
     <q-page-container>
       <router-view />
     </q-page-container>
-      
   </q-layout>
 </template>
 
@@ -87,9 +42,12 @@
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
+  components: {
+    'user-cart': () => import('../components/UserCart.vue')
+  },
   data () {
     return {
-      cartDrawerOpen: false,
+      userCart: false,
       tab: null
     }
   },

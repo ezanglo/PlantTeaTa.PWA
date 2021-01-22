@@ -15,6 +15,14 @@
                  @click="$q.fullscreen.toggle()"
                  v-if="$q.screen.gt.sm">
           </q-btn>
+
+          <q-btn round dense flat color="white" icon="ion-cart" @click="userCart = true">
+            <q-badge v-if="currentUserCart.length > 0" color="red" text-color="white" floating>
+              {{currentUserCart.length}}
+            </q-badge>
+            <q-tooltip>Cart</q-tooltip>
+          </q-btn>
+
           <q-btn round dense flat color="white" icon="notifications">
             <q-badge color="red" text-color="white" floating>
               5
@@ -23,7 +31,7 @@
               <q-list style="min-width: 100px">
                 <messages></messages>
                 <q-card class="text-center no-shadow no-border">
-                  <q-btn label="View All" style="max-width: 120px !important;" flat dense
+                  <q-btn label="View All" style="max-width: 120px !important" flat dense
                          class="text-indigo-8"></q-btn>
                 </q-card>
               </q-list>
@@ -32,7 +40,7 @@
           </q-btn>
           <q-btn round flat>
             <q-avatar size="26px">
-              <q-img :src="(currentUser) ? currentUser.profilePhoto: ''"></q-img>
+              <q-img :src="(currentUser) ? currentUser.profilePhoto: require('src/assets/default_profile.jpg')"></q-img>
             </q-avatar>
             <q-menu>
               <q-list style="min-width: 100px">
@@ -52,9 +60,6 @@
                     <q-item-label>Logout</q-item-label>
                   </q-item-section>
                 </q-item>
-                <!-- <q-card class="text-center no-shadow no-border">
-                  <q-btn @click="logoutUser()" label="Logout" style="max-width: 120px !important;" flat dense class="text-indigo-8"></q-btn>
-                </q-card> -->
               </q-list>
             </q-menu>
           </q-btn>
@@ -62,6 +67,26 @@
       </q-toolbar>
     </q-header>
 
+    <q-footer elevated v-if="currentRouteName === 'Menu'">
+      <q-tabs 
+        shrink 
+        stretch 
+        switch-indicator
+        indicator-color="blue"
+        active-color="blue"
+        class="bg-white text-black"
+        align="center"
+        >
+        <q-route-tab 
+            :icon="(category.categoryIcon)?category.categoryIcon:'extension'"
+            v-for="category in productCategories" 
+            :key="category.id" 
+            :to="{path: '/menu', query: { category: category.categoryName }}" 
+            :label="category.categoryName" 
+            exact replace
+        />
+      </q-tabs>
+    </q-footer>
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="bg-grey-1" >
       <q-list>
         <template v-for="(menuItem, index) in menuList">
@@ -69,8 +94,7 @@
             v-ripple
             clickable 
             :key="index" 
-            :active="activeMenu === menuItem.label" 
-            @click="activeMenu = menuItem.label"
+            :active="menuItem.name === currentRouteName" 
             :to="menuItem.route"
             active-class="q-item-no-link-highlighting"
           >
@@ -86,7 +110,15 @@
       </q-list>
 
     </q-drawer>
-
+    <q-dialog 
+      v-model="userCart" 
+      full-height
+      :maximized="$q.screen.lt.sm?true:false" 
+      position="right"
+      transition-show="slide-left"
+      transition-hide="slide-right">
+        <user-cart></user-cart>
+    </q-dialog>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -96,56 +128,70 @@
 <script>
 
 import { mapActions, mapGetters } from 'vuex'
-import Messages from "./Messages";
 
 export default {
+  components: {
+    'user-cart': () => import('../components/UserCart.vue'),
+    'messages': () => import('./Messages.vue')
+  },
   name: 'MainLayout',
   data () {
     return {
       leftDrawerOpen: false,
-      activeMenu: 'Dashboard',
+      userCart: false,
       menuList: [
         {
+          name: 'Dashboard',
           icon: 'eva-bar-chart',
           label: 'Dashboard',
           route: '/',
           separator: false
         },
         {
+          name: 'User Management',
           icon: 'eva-people-outline',
           label: 'Users',
           route: '/user_management',
           separator: false
         },
         {
+          name: 'Product Management',
           icon: 'eva-pricetags-outline',
           label: 'Products',
           route: '/product_management',
+          separator: false
+        },
+        {
+          name: 'Menu',
+          icon: 'eva-shopping-bag-outline',
+          label: 'Product Menu',
+          route: '/menu',
           separator: true
         },
         {
+          name: 'Settings',
           icon: 'settings',
           label: 'Settings',
           route: '/settings',
           separator: false
         },
-        {
-          icon: 'eva-pricetags-outline',
-          label: 'Ordering System',
-          route: '/order/menu',
-          separator: false
-        },
       ]
     }
   },
-  components: {
-    Messages
+  mounted: function(){
+    this.getProductCategories()
   },
   computed: {
-    ...mapGetters('user', ['currentUser']),
+    ...mapGetters('user', ['currentUser', 'currentUserCart']),
+    ...mapGetters('product', ['productCategories']),
+    currentRouteName() {
+        return this.$route.name
+    }
   },
   methods: {
-    ...mapActions('auth', ['logoutUser'])
+    ...mapActions('auth', ['logoutUser']),
+    ...mapActions('user', ['getCurrentUserCart']),
+    ...mapActions('product', ['getProductCategories'])
   }
 }
 </script>

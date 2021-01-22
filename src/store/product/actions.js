@@ -58,7 +58,7 @@ export const deleteProductPrice = async function ({ commit }, id) {
 
 /** Product Category */
 export const addProductCategory = async function ({ state, commit }, payload) {
-  await productService.insertProductCategory(payload)
+  const doc = await productService.insertProductCategory(payload)
   commit('addProductCategory', { ...payload, id: doc.id });
 }
 

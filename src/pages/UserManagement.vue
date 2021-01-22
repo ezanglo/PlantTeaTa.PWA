@@ -58,6 +58,15 @@
             @click="exportTable"
           />
         </template>
+        <template v-slot:body-cell-profile_photo="props">
+          <q-td :props="props">
+            <q-item round>
+            <q-avatar size="26px">
+              <q-img :src="(props.row.profilePhoto) ? props.row.profilePhoto : require('src/assets/default_profile.jpg')"></q-img>
+            </q-avatar>
+            </q-item>
+          </q-td>
+        </template>
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <div class="q-gutter-sm">
@@ -72,18 +81,18 @@
 </template>
 
 <script>
-import {exportFile} from "quasar";
+import {exportFile} from "quasar"
 import { mapGetters, mapActions } from 'vuex'
 
 function wrapCsvValue(val, formatFn) {
-    let formatted = formatFn !== void 0 ? formatFn(val) : val;
+    let formatted = formatFn !== void 0 ? formatFn(val) : val
 
     formatted =
-        formatted === void 0 || formatted === null ? "" : String(formatted);
+        formatted === void 0 || formatted === null ? "" : String(formatted)
 
-    formatted = formatted.split('"').join('""');
+    formatted = formatted.split('"').join('""')
 
-    return `"${formatted}"`;
+    return `"${formatted}"`
 }
 
 export default {
@@ -94,6 +103,14 @@ export default {
       new_customer: false,
       mode: "list",
       columns: [
+        {
+          name: "profile_photo",
+          required: true,
+          label: "",
+          align: "center",
+          field: "profilePhoto",
+          sortable: false
+        },
         {
           name: "full_name",
           required: true,
@@ -127,10 +144,10 @@ export default {
       pagination: {
         rowsPerPage: 10
       }
-    };
+    }
   },
   mounted: function() {
-    this.fetchUsers();
+    this.fetchUsers()
   },
   computed: {
     ...mapGetters('user', ['allUsers'])
@@ -166,18 +183,18 @@ export default {
               .join(",")
           )
         )
-        .join("\r\n");
+        .join("\r\n")
 
-      const status = exportFile("customer-management.csv", content, "text/csv");
+      const status = exportFile("customer-management.csv", content, "text/csv")
 
       if (status !== true) {
         this.$q.notify({
           message: "Browser denied file download...",
           color: "negative",
           icon: "warning"
-        });
+        })
       }
     }
   }
-};
+}
 </script>

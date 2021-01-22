@@ -101,7 +101,7 @@ cfg.module.rules.push({
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Loading', 'Notify', 'AppFullscreen']
+      plugins: ['Loading', 'Notify', 'Dialog', 'AppFullscreen']
     },
 
     // animations: 'all', // --- includes all animations

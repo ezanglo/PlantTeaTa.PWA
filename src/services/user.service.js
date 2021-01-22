@@ -22,3 +22,15 @@ export const deleteUser = (id) => {
 export const getUserCart = function(userId) {
     return db.getCollection('users/' + userId + '/cart')
 }
+
+export const addProductToCart = function(userId, data) {
+    return db.addDocument('users/' + userId + '/cart', data)
+}
+
+export const updateUserCart = function(userId, data) {
+    return db.updateDocument('users/' + userId + '/cart', data)
+}
+
+export const removeCartProduct = function(userId, id) {
+    return db.deleteDocument('users/' + userId + '/cart', id)
+}

@@ -51,6 +51,11 @@ const routes = [
           requiresAuth: true
         }
       },
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('pages/order/OrderMenu.vue')
+      },
     ]
   },
   {

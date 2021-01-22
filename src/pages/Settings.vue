@@ -12,10 +12,13 @@
             :grid="mode=='grid'"
             :pagination.sync="pagination"
           >
+          <template v-slot:top-right="props">
+            <q-btn :props="props" @click="showProductTypeDialog()" outline color="primary" label="Add New" class="q-mr-xs"/>
+          </template>
             <template v-slot:body-cell-action="props">
               <q-td :props="props" style="width:50px">
                 <div class="q-gutter-sm">
-                  <q-btn dense color="primary" icon="edit" @click="showProductTypeDialog(props.row.name)"/>
+                  <q-btn dense color="primary" icon="edit" @click="showProductTypeDialog(props.row.productType)"/>
                   <q-btn dense color="red" icon="delete"/>
                 </div>
               </q-td>
@@ -35,6 +38,9 @@
             :grid="mode=='grid'"
             :pagination.sync="pagination"
           >
+            <template v-slot:top-right="props">
+              <q-btn :props="props" @click="showProductCategoryDialog()" outline color="primary" label="Add New" class="q-mr-xs"/>
+            </template>
             <template v-slot:body-cell-categoryIcon="props">
               <q-td :props="props">
                 <q-icon 
@@ -47,7 +53,7 @@
               <q-td :props="props" style="max-width:50px">
                 <div class="q-gutter-sm">
                   <q-btn dense color="primary" icon="edit" @click="showProductCategoryDialog(props.row)"/>
-                  <q-btn dense color="red" icon="delete"/>
+                  <q-btn dense color="red" icon="delete" @click="removeProductCategory(props.row)"/>
                 </div>
               </q-td>
             </template>
@@ -102,7 +108,7 @@
               label="Category"
               value=""
               style="width: 100%"
-              v-model="currentProductCategory.name"
+              v-model="currentProductCategory.categoryName"
               :rules="[val => !!val || '*Field is required']"
             />
           </q-item>
@@ -229,11 +235,11 @@ export default {
           sortable: true
         }
       ],
-    };
+    }
   },
   mounted: function() {
-    this.getProductCategories();
-    this.getProductTypes();
+    this.getProductCategories()
+    this.getProductTypes()
   },
   computed: {
     ...mapGetters('product', ['productCategories', 'productTypes']),
@@ -251,30 +257,25 @@ export default {
     },
     productCategoryDialogTitle: {
       get() {
-        return (this.currentProductCategory) ? 'Update' : 'Add'
+        return (this.currentProductCategory.id) ? 'Update' : 'Add'
       }
     },
     isUpdatingProductCategory: {
       get() {
-        return (this.currentProductCategory) ? true : false
+        return (this.currentProductCategory.id) ? true : false
       }
     }
   },
   methods: {
-    ...mapActions('product', ['getProductCategories', 'getProductTypes', 'updateProductCategory', 'addProductCategory']),
+    ...mapActions('product', ['getProductCategories', 'getProductTypes', 'updateProductCategory', 'addProductCategory',
+            'deleteProductCategory']),
     showProductTypeDialog(type){
-      this.currentProductType = type;
-      this.productTypeDialog = true;
+      this.currentProductType = type
+      this.productTypeDialog = true
     },
     showProductCategoryDialog(category){
-      if(!category){
-        this.currentProductCategory = {}
-        this.productCategoryDialog = false
-      }
-      else {
-        this.currentProductCategory= {...category}
-        this.productCategoryDialog = true
-      }
+      this.productCategoryDialog = true
+      this.currentProductCategory= (category) ? {...category} : {}
     },
     async saveProductCategory () {
        this.$q.loading.show({
@@ -287,6 +288,16 @@ export default {
         } else {
           await this.addProductCategory(this.currentProductCategory)
         }
+        
+        let typeLabel = (this.isUpdatingProductCategory) ? "updated" : "added"
+        this.$q.notify({
+          message: this.currentProductCategory.categoryName + ' has been ' + typeLabel + '.',
+          type: 'positive',
+          actions: [
+            { label: 'Dismiss', color: 'white' }
+          ]
+        })
+        this.productCategoryDialog = false
       } catch (err) {
         this.$q.notify({
           message: `Looks like a problem ${this.productCategoryDialogTitle} the product category: ${err}`,
@@ -294,8 +305,36 @@ export default {
         })
       } finally {
         this.$q.loading.hide()
-        this.showProductCategoryDialog(false)
       }
+    },
+    async removeProductCategory(category) {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: 'Are you sure you want to remove category ' + category.categoryName,
+        cancel: true,
+        persistent: true
+      }).onOk(async () => {
+        try {
+          await this.deleteProductCategory(category.id)
+          this.$q.notify({
+            message: category.categoryName + ' has been removed',
+            type: 'positive',
+            icon: 'delete',
+            actions: [
+              { label: 'Dismiss', color: 'white' }
+            ]
+          })
+        } catch (err) {
+          this.$q.notify({
+            message: `Looks like a problem deleting product category: ${err}`,
+            color: 'negative'
+          })
+        } finally {
+          this.$q.loading.hide()
+        }
+      }).onCancel(() => {
+        
+      })
     },
   },
   watch: {
@@ -303,7 +342,7 @@ export default {
       this.showIconPicker = false
     }
   }
-};
+}
 </script>
 
 <style lang="sass">

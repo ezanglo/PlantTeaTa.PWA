@@ -100,3 +100,11 @@ export const updateProductCategory = (state, payload) => {
     }
   })
 }
+
+export const deleteProductCategory = (state, id) => {
+  state.productCategories.forEach(function(category, index) {
+    if(category.id == id){
+      state.productCategories.splice(index, 1)
+    }
+  })
+}

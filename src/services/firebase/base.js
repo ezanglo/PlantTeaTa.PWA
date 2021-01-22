@@ -64,6 +64,7 @@ export const handleOnAuthStateChanged = async (store, currentUser) => {
   // Get & bind the current user
   if (store.state.auth.isAuthenticated) {
     await store.dispatch('user/getCurrentUser', currentUser.uid)
+    await store.dispatch('user/getCurrentUserCart')
   }
 
   // If the user looses authentication route
