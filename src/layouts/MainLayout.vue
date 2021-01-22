@@ -165,7 +165,7 @@ export default {
           name: 'Menu',
           icon: 'eva-shopping-bag-outline',
           label: 'Product Menu',
-          route: '/menu',
+          route: {path: '/menu', query: { category: 'Classic' }},
           separator: true
         },
         {
@@ -180,6 +180,7 @@ export default {
   },
   mounted: function(){
     this.getProductCategories()
+    console.log(this.$route);
   },
   computed: {
     ...mapGetters('user', ['currentUser', 'currentUserCart']),

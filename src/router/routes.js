@@ -79,20 +79,6 @@ const routes = [
       }
     ]
   },
-  {
-    path: '/order',
-    component: () => import('layouts/OrderLayout.vue'),
-    meta: {
-      requiresAuth: true
-    },
-    children: [
-      {
-        path: 'menu',
-        name: 'Menu',
-        component: () => import('pages/order/OrderMenu.vue')
-      },
-    ]
-  }
 ]
 
 // Always leave this as last one

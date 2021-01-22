@@ -223,14 +223,14 @@ export default {
       addProductPriceDialog: false,
       addProductPriceAmount: '',
       addProductPriceSize: '',
-    };
+    }
   },
   mounted: function() {
-    this.getAllProducts();
-    this.getProductPrices();
-    this.getProductCategories();
-    this.getProductTypes();
-    this.getProductSizes();
+    this.getAllProducts()
+    this.getProductPrices()
+    this.getProductCategories()
+    this.getProductTypes()
+    this.getProductSizes()
   },
   computed: {
     ...mapGetters('product', ['allProducts', 'productCategories', 'productTypes', 'productPrices', 'productSizes']),
@@ -251,7 +251,7 @@ export default {
     },
     productSizeLabels: {
       get () {
-        const sizes = [];
+        const sizes = []
         this.productSizes.forEach(size => {
           if(size.product_type == this.currentProduct.productType){
             sizes.push(size.name)
@@ -259,16 +259,16 @@ export default {
         })
         return sizes.sort((a, b) => {
             let fa = a.toLowerCase(),
-                fb = b.toLowerCase();
+                fb = b.toLowerCase()
 
             if (fa < fb) {
-                return -1;
+                return -1
             }
             if (fa > fb) {
-                return 1;
+                return 1
             }
-            return 0;
-        });
+            return 0
+        })
       }
     }
   },
@@ -299,9 +299,9 @@ export default {
             productSize: this.addProductPriceSize 
           })
 
-          this.addProductPriceDialog = false;
-          this.addProductPriceAmount = '';
-          this.addProductPriceSize = '';
+          this.addProductPriceDialog = false
+          this.addProductPriceAmount = ''
+          this.addProductPriceSize = ''
         }
       })
     },
@@ -318,7 +318,7 @@ export default {
       }
     },
     showConfirmDialog (currentProduct) {
-      this.confirmDialog = true;
+      this.confirmDialog = true
       this.currentProduct = currentProduct
     },
     showProductDialog (currentProduct) {
@@ -361,7 +361,7 @@ export default {
       return filteredRows
     }
   }
-};
+}
 </script>
 <style lang="sass">
 .my-sticky-column-table
