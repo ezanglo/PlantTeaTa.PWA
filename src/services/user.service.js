@@ -34,3 +34,7 @@ export const updateUserCart = function(userId, data) {
 export const removeCartProduct = function(userId, id) {
     return db.deleteDocument('users/' + userId + '/cart', id)
 }
+
+export const clearUserCart = function(userId) {
+    return db.clearCollection('users/' + userId + '/cart')
+}

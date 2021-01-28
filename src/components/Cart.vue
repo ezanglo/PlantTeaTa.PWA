@@ -1,44 +1,46 @@
 <template>
-  <q-card style="min-width: 400px;">
+  <q-card style="min-width: 450px;">
     <q-form @submit="checkOutOrders" class="full-height column">
       <q-card-section class="bg-teal text-white col-auto">
-        <div class="text-h6">Your Cart</div>
+        <div class="text-h6">{{title}}</div>
       </q-card-section>
       
-      <div v-if="currentUserCart.length <= 0" class="absolute-center" style="opacity:.5">
+      <div v-if="cartItems.length <= 0" class="absolute-center" style="opacity:.5">
         <div class="text-h5 text-primary text-center">
           Your Cart is Empty  
         </div>
       </div>
       <q-card-section class="col overflow-auto">
-        <q-item v-for="product in currentUserCart" :key="product.id" class="row justify-between items-center q-mb-lg">
-          <q-item-section class="col-3">
+        <q-item v-for="product in cartItems" :key="product.id" class="row justify-between items-center q-mb-none">
+          <q-item-section class="col-2">
             <q-item-label :title="product.productName">{{product.productName | truncate(25, '...')}}</q-item-label>
           </q-item-section>
-          <q-item-section class="col-1 content-center">
+          <q-item-section class="col-2 content-center">
             <q-item-label>{{product.productSize}}</q-item-label>
           </q-item-section>
           <q-item-section class="col-3 content-center">
             <div class="row items-center" style="width:auto">
-              <q-btn dense flat icon="remove" @click="decreaseProductQuantity(product)"/>
+              <q-btn v-if="!readOnly" dense flat icon="remove" @click="decreaseProductQuantity(product)"/>
               <q-item-label>{{product.productQuantity}}</q-item-label>
-              <q-btn dense flat icon="add"  @click="increaseProductQuantity(product)"/>
+              <q-btn v-if="!readOnly" dense flat icon="add"  @click="increaseProductQuantity(product)"/>
             </div>
           </q-item-section>
           <q-item-section class="col-3 content-center">
             <q-item-label>{{getComputedPrice(product) | toCurrency}}</q-item-label>
           </q-item-section>
-          <q-item-section class="col-1 content-center">
+          <q-item-section v-if="!readOnly" class="col-1 content-center">
               <q-btn dense flat icon="delete"  @click="removeProductFromCart(product)"/>
           </q-item-section>
         </q-item>
       </q-card-section>
-      <q-card-section v-if="currentUserCart.length > 0" align="right">
+      <q-separator/>
+      <q-card-section v-if="cartItems.length > 0" align="right">
         <q-item-label>Total: {{totalCartAmount | toCurrency}}</q-item-label>
       </q-card-section>
       <q-card-actions align="right" class="col-auto">
+        <q-btn flat label="LAST ORDER" color="primary" @click="showLastOrder" v-if="!readOnly"/>
         <q-btn flat label="CANCEL" color="primary" v-close-popup />
-        <q-btn flat label="CHECKOUT" type="submit" color="primary" v-close-popup v-if="currentUserCart.length > 0"/>
+        <q-btn flat label="CHECKOUT" type="submit" color="primary" v-if="cartItems.length > 0 && !readOnly"/>
       </q-card-actions>
     </q-form>
   </q-card>
@@ -47,11 +49,15 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
-  name: 'UserCart',
+  name: 'Cart',
+  props: {
+    meta: {
+      type: Object
+    }
+  },
   data() {
-    const { meta } = this;
     return {
-      
+      currentOrder: this.meta
     }
   },
   mounted: function() {
@@ -64,16 +70,74 @@ export default {
       get(){
         return this.getTotalCartAmount()
       }
+    },
+    cartItems: {
+      get() {
+        let items = this.currentUserCart
+        if(this.currentOrder){
+          items = JSON.parse(this.currentOrder.orderList)
+        }
+        return items
+      },
+      set(val) {
+        return val
+      }
+    },
+    readOnly: {
+      get() {
+        return (this.currentOrder)
+      }
+    },
+    title: {
+      get() {
+        return (this.currentOrder) ? 'ORDER: ' + this.currentOrder.id.toUpperCase() : 'Your Cart'
+      }
     }
   },
   methods: {
     ...mapActions('user', ['updateCartProductQuantity', 'removeCartProduct']),
+    ...mapActions('order', ['addOrder', 'getLastOrder']),
     checkOutOrders(){
-      console.log(JSON.stringify(this.currentUserCart));
+      if(this.readOnly){
+        return
+      }
+
+      this.$q.dialog({
+        title: 'Checkout your Order',
+        message: 'Enter a description',
+        prompt: {
+          type: 'text' // optional
+        },
+        cancel: true,
+        persistent: true
+      }).onOk(async data => {
+        try {
+          await this.addOrder({
+            orderList: JSON.stringify(this.cartItems),
+            totalAmount: this.totalCartAmount,
+            orderDescription: (data) ? data : ''
+          })
+          this.$q.notify({
+            message: 'Order Complete!',
+            type: 'positive',
+            position: 'bottom-left',
+            actions: [
+              { label: 'Dismiss', color: 'white' }
+            ]
+          })
+        } catch (err) {
+          this.$q.notify({
+            message: `Looks like a problem adding the orders: ${err}`,
+            color: 'negative'
+          })
+        } finally {
+          this.$q.loading.hide()
+        }
+      })
     },
     getTotalCartAmount(){
       let total = 0;
-      this.currentUserCart.forEach(cartProduct => {
+      this.cartItems.forEach(cartProduct => {
         const price = this.getPriceFromProduct(cartProduct)
         if(price){
           total += (parseInt(cartProduct.productQuantity) * parseInt(price.productPrice))
@@ -122,6 +186,9 @@ export default {
       }
     },
     removeProductFromCart(product) {
+      if(this.readOnly){
+        return
+      }
       this.$q.dialog({
         title: 'Confirm',
         message: 'Are you sure you want to remove ' + product.productName + ' from cart?',
@@ -156,6 +223,12 @@ export default {
       }).onCancel(() => {
         
       })
+    },
+    async showLastOrder(){
+      const lastOrder = await this.getLastOrder()
+      if(lastOrder.id){
+        this.currentOrder = lastOrder
+      }
     }
   }
 }

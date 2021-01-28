@@ -78,3 +78,14 @@ export const updateDocument = (collectionName, data) => {
 export const deleteDocument = (collectionName, id) => {
   return getDocument(collectionName, id).delete()
 }
+
+export const clearCollection = (collectionName) => {
+  const batch = firestore().batch()
+  return firestore().collection(collectionName).get()
+  .then(collection => {
+    collection.docs.map(doc => {
+      batch.delete(doc.ref)
+    })
+    batch.commit()
+  })
+}

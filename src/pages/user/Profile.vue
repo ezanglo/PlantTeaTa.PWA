@@ -29,6 +29,10 @@
               <label class="text-body1 text-left">Mobile Number:</label>
               <p class="text-body1 text-right">{{ getUserData('mobile') }}</p>
             </div>
+            <div class="row justify-between">
+              <label class="text-body1 text-left">Branch:</label>
+              <p class="text-body1 text-right">{{ getUserData('branchName') }}</p>
+            </div>
         </div>
     </div>
     <q-btn class="fixed-bottom-right q-ma-md" round="round" color="primary" icon="edit" @click="setEditUserDialog(true); setBlur()"></q-btn>

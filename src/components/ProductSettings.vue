@@ -35,8 +35,6 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import { QUploaderBase } from 'quasar'
-import { productCategories } from 'src/store/product/getters';
 export default {
   name: 'ProductSettings',
   props: {

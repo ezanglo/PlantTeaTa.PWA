@@ -1,4 +1,4 @@
-export default ({ Vue}) => {
+export default ({ Vue, store}) => {
     Vue.filter('toCurrency', function (value) {
         if(isNaN(value)){
             return value;
@@ -17,5 +17,19 @@ export default ({ Vue}) => {
         node.innerHTML = text;
         var content = node.textContent;
         return content.length > length ? content.slice(0, length) + clamp : content;
+    });
+    
+    Vue.filter('toProductType', function(productId){
+        if(!productId){
+            return
+        }
+        const allProducts = store.state.product.allProducts
+        let product = allProducts.find(function(product){
+            return product.id == productId
+        })
+        if(!product){
+            return
+        }
+        return product.productType
     });
 }

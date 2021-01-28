@@ -28,7 +28,21 @@
                 <q-input class="col" id="email" v-model="email" borderless="borderless" dense="dense" type="text"></q-input>
             </div>
             <div class="row justify-between items-center q-mb-lg"><label class="col-3" for="mobile">Mobile</label>
-                <q-input class="col" id="mobile" v-model="mobile" borderless="borderless" dense="dense" hint="+1(###) ###-####" mask="+#(###) ###-####" type="text"></q-input>
+                <q-input class="col" id="mobile" v-model="mobile" borderless="borderless" dense="dense" hint="+63(###) ###-####" mask="+##(###) ###-####" type="text"></q-input>
+            </div>
+            <div class="row justify-between items-center q-mb-lg">
+              <label class="col-3" for="mobile">Branch</label>
+              <q-select 
+                class="col" 
+                dense outlined
+                color="primary"
+                for="branch"
+                lazy-rules="lazy-rules"
+                name="branch"
+                style="width: 100%"
+                v-model="branchName"
+                :options="branchNames"
+              />
             </div>
         </section>
         <div class="row justify-between q-my-lg q-px-md absolute-bottom">
@@ -64,7 +78,12 @@ export default {
       fullName: state.fullName,
       mobile: state.mobile,
       photoType: '',
-      photoUpload: false
+      photoUpload: false,
+      branchName: 'Cavite',
+      branchNames: [
+        'Cavite',
+        'Bulacan'
+      ]
     }
   },
   computed: {
@@ -88,7 +107,7 @@ export default {
       this.photoType = ''
     },
     async saveUserData () {
-      const { currentUser, email, fullName, mobile } = this
+      const { currentUser, email, fullName, mobile, branchName } = this
       this.$q.loading.show({
         message: 'Updating your data, please stand by...',
         customClass: 'text-h3, text-bold'
@@ -98,7 +117,8 @@ export default {
           id: currentUser.id,
           email,
           fullName,
-          mobile
+          mobile,
+          branchName
         })
       } catch (err) {
         this.$q.notify({

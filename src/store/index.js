@@ -5,6 +5,8 @@ import { vuexfireMutations } from 'vuexfire'
 import auth from './auth'
 import user from './user'
 import product from './product'
+import order from './order'
+import expense from './expense'
 
 Vue.use(Vuex)
 
@@ -18,7 +20,9 @@ export default function (/* { ssrContext } */) {
     modules: {
       auth,
       user,
-      product
+      product,
+      order,
+      expense
     },
     mutations: {
       ...vuexfireMutations

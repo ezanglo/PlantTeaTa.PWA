@@ -146,26 +146,10 @@ export default {
       }
     }
   },
-  mounted: function() {
-    this.fetchUsers()
-  },
   computed: {
     ...mapGetters('user', ['allUsers'])
   },
   methods: {
-    ...mapActions('user', ['getAllUsers']),
-    async fetchUsers() {
-      try {
-        await this.getAllUsers()
-      } catch (err) {
-        this.$q.notify({
-          message: `Looks like a problem getting users: ${err}`,
-          color: 'negative'
-        })
-      } finally {
-        this.$q.loading.hide()
-      }
-    },
     exportTable() {
       // naive encoding to csv format
       const content = [this.columns.map(col => wrapCsvValue(col.label))]

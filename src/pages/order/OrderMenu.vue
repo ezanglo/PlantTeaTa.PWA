@@ -11,7 +11,7 @@
       hide-bottom
     >
       <template v-slot:item="props">
-        <div class="q-pa-xs col-grow col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="q-pa-xs col-grow col-xs-6 col-sm-3 col-md-3 col-lg-2">
           <q-card class="q-ma-xs" :props="props">
             <q-img style :src="productImage(props.row.productType)">
               <div class="absolute-bottom">
@@ -89,10 +89,6 @@ export default {
       tab: null,
     }
   },
-  mounted: function() {
-    this.getAllProducts()
-    this.getProductPrices()
-  },
   computed: {
     ...mapGetters('product', ['allProducts', 'productCategories']),
     categoryFilter: {
@@ -102,7 +98,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions('product', ['getAllProducts', 'getProductPrices', 'getProductCategories']),
     ...mapActions('user', ['addProductToCart']),
     setBlur () {
       this.$emit('setBlur')

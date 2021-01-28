@@ -38,14 +38,14 @@
           </q-btn>
           
           <q-select label="Types" v-model="filters.type" :options="productTypes" class="q-mr-sm" style="width:20vh" dense clearable outlined />
-          <q-select label="Categories" v-model="filters.category" :options="productCategories" option-value="name" option-label="name" style="width:20vh" dense clearable outlined/>
+          <q-select label="Categories" v-model="filters.category" :options="productCategories" option-value="categoryName" option-label="categoryName" style="width:20vh" dense clearable outlined/>
         </template>
         <template v-slot:body-cell-price="props">
           <q-td :props="props" style="min-width:15em">
             <q-select 
               filled 
               value=''
-              label="Prices"
+              :label="props.row.productPrices.length + ' price(s)'"
               dense
               :options="props.row.productPrices"
             >
@@ -225,13 +225,6 @@ export default {
       addProductPriceSize: '',
     }
   },
-  mounted: function() {
-    this.getAllProducts()
-    this.getProductPrices()
-    this.getProductCategories()
-    this.getProductTypes()
-    this.getProductSizes()
-  },
   computed: {
     ...mapGetters('product', ['allProducts', 'productCategories', 'productTypes', 'productPrices', 'productSizes']),
     filter() {
@@ -274,8 +267,7 @@ export default {
   },
   methods: {
     ...mapMutations('product', ['setProductDialog']),
-    ...mapActions('product', ['getAllProducts', 'deleteProduct', 'addProductPrice', 'deleteProductPrice',
-                'getProductCategories', 'getProductTypes', 'getProductPrices', 'getProductSizes']),
+    ...mapActions('product', ['deleteProduct', 'addProductPrice', 'deleteProductPrice']),
     async deleteCurrentProduct() {
       try {
         await this.deleteProduct(this.currentProduct.id)

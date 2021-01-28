@@ -117,7 +117,7 @@
       position="right"
       transition-show="slide-left"
       transition-hide="slide-right">
-        <user-cart></user-cart>
+        <cart></cart>
     </q-dialog>
     <q-page-container>
       <router-view />
@@ -131,7 +131,7 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
-    'user-cart': () => import('../components/UserCart.vue'),
+    'cart': () => import('../components/Cart.vue'),
     'messages': () => import('./Messages.vue')
   },
   name: 'MainLayout',
@@ -162,6 +162,20 @@ export default {
           separator: false
         },
         {
+          name: 'Sales Report',
+          icon: 'point_of_sale',
+          label: 'Sales Report',
+          route: '/sales_report',
+          separator: false
+        },
+        {
+          name: 'Expenses',
+          icon: 'credit_card',
+          label: 'Expenses',
+          route: '/expenses',
+          separator: false
+        },
+        {
           name: 'Menu',
           icon: 'eva-shopping-bag-outline',
           label: 'Product Menu',
@@ -180,7 +194,6 @@ export default {
   },
   mounted: function(){
     this.getProductCategories()
-    console.log(this.$route);
   },
   computed: {
     ...mapGetters('user', ['currentUser', 'currentUserCart']),

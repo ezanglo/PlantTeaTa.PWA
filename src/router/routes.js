@@ -56,6 +56,16 @@ const routes = [
         name: 'Menu',
         component: () => import('pages/order/OrderMenu.vue')
       },
+      {
+        path: 'sales_report',
+        name: 'Sales Report',
+        component: () => import('pages/order/SalesReport.vue')
+      },
+      {
+        path: 'expenses',
+        name: 'Expenses',
+        component: () => import('pages/Expenses.vue')
+      },
     ]
   },
   {

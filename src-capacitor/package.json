@@ -1,0 +1,12 @@
+{
+  "name": "plantteata.pwa",
+  "version": "0.0.1",
+  "description": "A Plant Tea-ta App",
+  "author": "Ezra Anglo <dev.ezraanglo@gmail.com>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^2.4.6",
+    "@capacitor/cli": "^2.0.0",
+    "@capacitor/core": "^2.0.0"
+  }
+}

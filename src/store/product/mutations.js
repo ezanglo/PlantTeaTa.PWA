@@ -62,6 +62,11 @@ export const updateProduct = (state, payload) => {
 export const setProductPrices = (state, productPrices) => {
   state.allProducts.forEach(product => {
     let product_prices = productPrices.filter(e => { return e.productId == product.id });
+    if(product_prices && product_prices.length > 0){
+      product_prices.sort(function(a, b){
+        return b.productPrice - a.productPrice
+      })
+    }
     product.productPrices = product_prices
   })
   state.productPrices = productPrices

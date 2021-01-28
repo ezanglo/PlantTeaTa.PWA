@@ -1,0 +1,10 @@
+{
+  "appId": "org.plantteata.app",
+  "appName": "Plant Tea-ta App",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "server": {
+    "url": "http://192.168.1.7:8081"
+  }
+}

@@ -7,8 +7,8 @@
             <q-card>
               <q-item style="background-color: #546bfa" class="q-pa-none">
                 <q-item-section class="q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">$ 20k</q-item-label>
-                  <q-item-label>Monthly Income</q-item-label>
+                  <q-item-label class="text-white text-h6 text-weight-bolder">{{caviteIncome | toCurrency}}</q-item-label>
+                  <q-item-label>Cavite Sales</q-item-label>
                 </q-item-section>
                 <q-item-section side class="q-mr-md text-white">
                   <q-icon name="fas fa-dollar-sign" color="white" size="44px"></q-icon>
@@ -19,12 +19,12 @@
           <div class="col-md-3 col-sm-12 col-xs-12">
             <q-card>
               <q-item style="background-color: #3a9688" class="q-pa-none">
-                <q-item-section class=" q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">20</q-item-label>
-                  <q-item-label>Weekly Sales</q-item-label>
+                <q-item-section class="q-pa-md q-ml-none  text-white">
+                  <q-item-label class="text-white text-h6 text-weight-bolder">{{bulacanIncome | toCurrency}}</q-item-label>
+                  <q-item-label>Bulacan Sales</q-item-label>
                 </q-item-section>
                 <q-item-section side class="q-mr-md text-white">
-                  <q-icon name="fas fa-chart-bar" color="white" size="44px"></q-icon>
+                  <q-icon name="fas fa-dollar-sign" color="white" size="44px"></q-icon>
                 </q-item-section>
               </q-item>
             </q-card>
@@ -33,11 +33,11 @@
             <q-card>
               <q-item style="background-color: #7cb342" class="q-pa-none ">
                 <q-item-section class=" q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">321</q-item-label>
-                  <q-item-label>New Customers</q-item-label>
+                  <q-item-label class="text-white text-h6 text-weight-bolder">{{totalExpenses | toCurrency}}</q-item-label>
+                  <q-item-label>Total Expenses</q-item-label>
                 </q-item-section>
                 <q-item-section side class="q-mr-md text-white">
-                  <q-icon name="fas fa-chart-line" color="white" size="44px"></q-icon>
+                  <q-icon name="credit_card" color="white" size="44px"></q-icon>
                 </q-item-section>
               </q-item>
             </q-card>
@@ -46,7 +46,7 @@
             <q-card>
               <q-item style="background-color: #f88c2b" class="q-pa-none">
                 <q-item-section class=" q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">82</q-item-label>
+                  <q-item-label class="text-white text-h6 text-weight-bolder">{{allUsers.length}}</q-item-label>
                   <q-item-label>Active Users</q-item-label>
                 </q-item-section>
                 <q-item-section side class="q-mr-md text-white">
@@ -77,33 +77,33 @@
             <div class="col-lg-3 col-md-3 col-xs-6 col-sm-6">
               <q-item>
                 <q-item-section top avatar>
-                  <q-avatar color="blue" text-color="white" icon="bluetooth"/>
+                  <q-avatar color="blue" text-color="white" icon="free_breakfast"/>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label class="text-h6 text-blue text-bold">4321</q-item-label>
-                  <q-item-label caption>Fashions</q-item-label>
+                  <q-item-label class="text-h6 text-blue text-bold">{{milkTeaSales}}</q-item-label>
+                  <q-item-label caption>Milk Tea</q-item-label>
                 </q-item-section>
               </q-item>
             </div>
             <div class="col-lg-3 col-md-3 col-xs-6 col-sm-6">
               <q-item>
                 <q-item-section top avatar>
-                  <q-avatar color="grey-8" text-color="white" icon="bluetooth"/>
+                  <q-avatar color="grey-8" text-color="white" icon="local_pizza"/>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label class="text-h6 text-grey-8 text-bold">9876</q-item-label>
-                  <q-item-label caption>Electronics</q-item-label>
+                  <q-item-label class="text-h6 text-grey-8 text-bold">{{snackSales}}</q-item-label>
+                  <q-item-label caption>Snacks</q-item-label>
                 </q-item-section>
               </q-item>
             </div>
             <div class="col-lg-3 col-md-3 col-xs-6 col-sm-6">
               <q-item>
                 <q-item-section top avatar>
-                  <q-avatar color="green-6" text-color="white" icon="bluetooth"/>
+                  <q-avatar color="green-6" text-color="white" icon="playlist_add"/>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label class="text-h6 text-green-6 text-bold">345</q-item-label>
-                  <q-item-label caption>Toys</q-item-label>
+                  <q-item-label class="text-h6 text-green-6 text-bold">{{addOnSales}}</q-item-label>
+                  <q-item-label caption>Add Ons</q-item-label>
                 </q-item-section>
               </q-item>
             </div>
@@ -412,308 +412,382 @@
 </template>
 
 <script>
-    import IEcharts from 'vue-echarts-v3/src/full.js'
 
-    export default {
-        name: "Dashboard2",
-        components: {
-            IEcharts
-        },
-        data() {
+import { mapGetters } from 'vuex'
+import IEcharts from 'vue-echarts-v3/src/full.js'
+
+export default {
+    name: "Dashboard2",
+    components: {
+        IEcharts
+    },
+    data() {
+        return {
+            slide: 1,
+            tab: 'contact',
+            messages: [
+                {
+                    id: 5,
+                    name: 'Pratik Patel',
+                    msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                        '            weekend. Do you want to grab brunch?',
+                    avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4',
+                    time: '10:42 PM'
+                }, {
+                    id: 6,
+                    name: 'Winfield Stapforth',
+                    msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                        '            weekend. Do you want to grab brunch?',
+                    avatar: 'https://cdn.quasar.dev/img/avatar6.jpg',
+                    time: '11:17 AM'
+                }, {
+                    id: 1,
+                    name: 'Boy',
+                    msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                        '            weekend. Do you want to grab brunch?',
+                    avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
+                    time: '5:17 AM'
+                }, {
+                    id: 2,
+                    name: 'Jeff Galbraith',
+                    msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                        '            weekend. Do you want to grab brunch?',
+                    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
+                    time: '5:17 AM'
+                }, {
+                    id: 3,
+                    name: 'Razvan Stoenescu',
+                    msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                        '            weekend. Do you want to grab brunch?',
+                    avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
+                    time: '5:17 AM'
+                }
+            ],
+            contacts: [
+                {
+                    name: 'Pratik Patel',
+                    position: 'Developer',
+                    avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4'
+                },
+                {
+                    name: 'Razvan Stoenescu',
+                    position: 'Developer',
+                    avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg'
+                },
+                {
+                    name: 'Jeff Galbraith',
+                    position: 'Developer',
+                    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg'
+                },
+                {
+                    name: 'Brunhilde Panswick',
+                    position: 'Administrator',
+                    avatar: 'https://cdn.quasar.dev/img/avatar2.jpg'
+                },
+                {
+                    name: 'Winfield Stapforth',
+                    position: 'Administrator',
+                    avatar: 'https://cdn.quasar.dev/img/avatar6.jpg'
+                },
+
+            ],
+            sales_data: [
+                {
+                    name: 'Pratik Patel',
+                    Progress: 70,
+                    status: 'Canceled',
+                    stock: '14 / 30',
+                    date: '23 Oct 2018',
+                    avatar: 'https://avatars3.githubusercontent.com/u/34883558?s=400&u=09455019882ac53dc69b23df570629fd84d37dd1&v=4',
+                    product_name: 'Woman Bag',
+                    total: '$300,00',
+                    code: 'QWE123',
+                    // prod_img: require('src/assets/bag.jpg')
+
+                },
+                {
+                    name: 'Mayank Patel',
+                    Progress: 60,
+                    status: 'Sent',
+                    date: '11 Nov 2018',
+                    stock: '25 / 70',
+                    avatar: 'https://avatars2.githubusercontent.com/u/27857088?s=400&u=a898efbc753d93cf4c2070a7cf3b05544b50deea&v=4',
+                    product_name: 'Laptop',
+                    total: '$230,00',
+                    code: 'ABC890',
+                    // prod_img: require('src/assets/laptop.jpg')
+                },
+                {
+                    name: 'Mayur Patel',
+                    Progress: 30,
+                    status: 'Pending',
+                    stock: '35 / 50',
+                    avatar: 'https://avatars0.githubusercontent.com/u/55240045?s=400&u=cf9bffc2bd2d8e42ca6e5abf40ddd6c1a03ce2860&v=4',
+                    product_name: 'Pinapple Jam',
+                    total: '$34,00',
+                    date: '19 Sept 2020',
+                    code: 'GHI556',
+                    // prod_img: require('src/assets/jam.jpg')
+                },
+                {
+                    name: 'Jeff Galbraith',
+                    Progress: 100,
+                    status: 'Paid',
+                    stock: '18 / 33',
+                    avatar: 'https://avatars1.githubusercontent.com/u/10262924?s=400&u=9f601b344d597ed76581e3a6a10f3c149cb5f6dc&v=4',
+                    product_name: 'Action Figure',
+                    total: '$208,00',
+                    date: '19 Sept 2020',
+                    code: 'JKL345',
+                    // prod_img: require('src/assets/action.jpg')
+                }
+            ],
+            sales_column: [
+                {
+                    name: 'Products',
+                    label: 'Products',
+                    field: 'Products',
+                    sortable: true,
+                    align: 'left',
+                },
+                {name: 'Name', label: 'Buyer', field: 'name', sortable: true, align: 'left'},
+                {
+                    name: 'Total',
+                    label: 'Total',
+                    field: 'total',
+                    sortable: true,
+                    align: 'right',
+                    classes: 'text-bold'
+                },
+                {
+                    name: 'Status',
+                    label: 'Status',
+                    field: 'status',
+                    sortable: true,
+                    align: 'left',
+                    classes: 'text-bold'
+                },
+                {name: 'Stock', label: 'Stock', field: 'task', sortable: true, align: 'left'},
+            ],
+
+        }
+    },
+    computed: {
+    ...mapGetters('order', ['allOrders']),
+    ...mapGetters('expense', ['allExpenses']),
+    ...mapGetters('user', ['allUsers']),
+        getSalesOptions() {
             return {
-                slide: 1,
-                tab: 'contact',
-                messages: [
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {// Coordinate axis indicator, coordinate axis trigger is valid
+                        type: 'shadow' // The default is a straight line, optional:'line' |'shadow'
+                    }
+                },
+                grid: {
+                    left: '2%',
+                    right: '2%',
+                    top: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
                     {
-                        id: 5,
-                        name: 'Pratik Patel',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4',
-                        time: '10:42 PM'
-                    }, {
-                        id: 6,
-                        name: 'Winfield Stapforth',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://cdn.quasar.dev/img/avatar6.jpg',
-                        time: '11:17 AM'
-                    }, {
-                        id: 1,
-                        name: 'Boy',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
-                        time: '5:17 AM'
-                    }, {
-                        id: 2,
-                        name: 'Jeff Galbraith',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-                        time: '5:17 AM'
-                    }, {
-                        id: 3,
-                        name: 'Razvan Stoenescu',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
-                        time: '5:17 AM'
+                        type: 'category',
+                        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
                     }
                 ],
-                contacts: [
+                yAxis: [
                     {
-                        name: 'Pratik Patel',
-                        position: 'Developer',
-                        avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4'
-                    },
-                    {
-                        name: 'Razvan Stoenescu',
-                        position: 'Developer',
-                        avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg'
-                    },
-                    {
-                        name: 'Jeff Galbraith',
-                        position: 'Developer',
-                        avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg'
-                    },
-                    {
-                        name: 'Brunhilde Panswick',
-                        position: 'Administrator',
-                        avatar: 'https://cdn.quasar.dev/img/avatar2.jpg'
-                    },
-                    {
-                        name: 'Winfield Stapforth',
-                        position: 'Administrator',
-                        avatar: 'https://cdn.quasar.dev/img/avatar6.jpg'
-                    },
-
-                ],
-                sales_data: [
-                    {
-                        name: 'Pratik Patel',
-                        Progress: 70,
-                        status: 'Canceled',
-                        stock: '14 / 30',
-                        date: '23 Oct 2018',
-                        avatar: 'https://avatars3.githubusercontent.com/u/34883558?s=400&u=09455019882ac53dc69b23df570629fd84d37dd1&v=4',
-                        product_name: 'Woman Bag',
-                        total: '$300,00',
-                        code: 'QWE123',
-                        // prod_img: require('src/assets/bag.jpg')
-
-                    },
-                    {
-                        name: 'Mayank Patel',
-                        Progress: 60,
-                        status: 'Sent',
-                        date: '11 Nov 2018',
-                        stock: '25 / 70',
-                        avatar: 'https://avatars2.githubusercontent.com/u/27857088?s=400&u=a898efbc753d93cf4c2070a7cf3b05544b50deea&v=4',
-                        product_name: 'Laptop',
-                        total: '$230,00',
-                        code: 'ABC890',
-                        // prod_img: require('src/assets/laptop.jpg')
-                    },
-                    {
-                        name: 'Mayur Patel',
-                        Progress: 30,
-                        status: 'Pending',
-                        stock: '35 / 50',
-                        avatar: 'https://avatars0.githubusercontent.com/u/55240045?s=400&u=cf9bffc2bd2d8e42ca6e5abf40ddd6c1a03ce2860&v=4',
-                        product_name: 'Pinapple Jam',
-                        total: '$34,00',
-                        date: '19 Sept 2020',
-                        code: 'GHI556',
-                        // prod_img: require('src/assets/jam.jpg')
-                    },
-                    {
-                        name: 'Jeff Galbraith',
-                        Progress: 100,
-                        status: 'Paid',
-                        stock: '18 / 33',
-                        avatar: 'https://avatars1.githubusercontent.com/u/10262924?s=400&u=9f601b344d597ed76581e3a6a10f3c149cb5f6dc&v=4',
-                        product_name: 'Action Figure',
-                        total: '$208,00',
-                        date: '19 Sept 2020',
-                        code: 'JKL345',
-                        // prod_img: require('src/assets/action.jpg')
+                        type: 'value',
+                        splitLine: {
+                            show: false
+                        }
                     }
                 ],
-                sales_column: [
+                series: [
                     {
-                        name: 'Products',
-                        label: 'Products',
-                        field: 'Products',
-                        sortable: true,
-                        align: 'left',
-                    },
-                    {name: 'Name', label: 'Buyer', field: 'name', sortable: true, align: 'left'},
-                    {
-                        name: 'Total',
-                        label: 'Total',
-                        field: 'total',
-                        sortable: true,
-                        align: 'right',
-                        classes: 'text-bold'
+                        name: 'Fashions',
+                        type: 'bar',
+                        data: [40, 45, 27, 50, 32, 50, 70, 30, 30, 40, 67, 29],
+                        color: '#546bfa'
                     },
                     {
-                        name: 'Status',
-                        label: 'Status',
-                        field: 'status',
-                        sortable: true,
-                        align: 'left',
-                        classes: 'text-bold'
+                        name: 'Electronics',
+                        type: 'bar',
+                        data: [124, 100, 20, 120, 117, 70, 110, 90, 50, 90, 20, 50],
+                        color: '#3a9688'
                     },
-                    {name: 'Stock', label: 'Stock', field: 'task', sortable: true, align: 'left'},
-                ],
-
+                    {
+                        name: 'Toys',
+                        type: 'bar',
+                        data: [17, 2, 0, 29, 20, 10, 23, 0, 8, 20, 11, 30],
+                        color: '#02a9f4'
+                    },
+                    {
+                        name: 'Vouchers',
+                        type: 'bar',
+                        data: [20, 100, 80, 14, 90, 86, 100, 70, 120, 50, 30, 60],
+                        color: '#f88c2b'
+                    },
+                ]
             }
         },
-        computed: {
-            getSalesOptions() {
-                return {
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {// Coordinate axis indicator, coordinate axis trigger is valid
-                            type: 'shadow' // The default is a straight line, optional:'line' |'shadow'
-                        }
-                    },
-                    grid: {
-                        left: '2%',
-                        right: '2%',
-                        top: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis: [
-                        {
-                            type: 'category',
-                            data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            type: 'value',
-                            splitLine: {
-                                show: false
-                            }
-                        }
-                    ],
-                    series: [
-                        {
-                            name: 'Fashions',
-                            type: 'bar',
-                            data: [40, 45, 27, 50, 32, 50, 70, 30, 30, 40, 67, 29],
-                            color: '#546bfa'
+        getPieOptions() {
+            return {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                legend: {
+                    bottom: 10,
+                    left: 'center',
+                    data: ['Fashions', 'Electronics', 'Toys', 'Vouchers']
+                },
+                series: [
+                    {
+                        name: 'Sales',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
                         },
-                        {
-                            name: 'Electronics',
-                            type: 'bar',
-                            data: [124, 100, 20, 120, 117, 70, 110, 90, 50, 90, 20, 50],
-                            color: '#3a9688'
-                        },
-                        {
-                            name: 'Toys',
-                            type: 'bar',
-                            data: [17, 2, 0, 29, 20, 10, 23, 0, 8, 20, 11, 30],
-                            color: '#02a9f4'
-                        },
-                        {
-                            name: 'Vouchers',
-                            type: 'bar',
-                            data: [20, 100, 80, 14, 90, 86, 100, 70, 120, 50, 30, 60],
-                            color: '#f88c2b'
-                        },
-                    ]
-                }
-            },
-            getPieOptions() {
-                return {
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: '{a} <br/>{b}: {c} ({d}%)'
-                    },
-                    legend: {
-                        bottom: 10,
-                        left: 'center',
-                        data: ['Fashions', 'Electronics', 'Toys', 'Vouchers']
-                    },
-                    series: [
-                        {
-                            name: 'Sales',
-                            type: 'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
+                        emphasis: {
                             label: {
                                 show: false,
-                                position: 'center'
-                            },
-                            emphasis: {
-                                label: {
-                                    show: false,
-                                    fontSize: '30',
-                                    fontWeight: 'bold'
+                                fontSize: '30',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [
+                            {
+                                value: 335, name: 'Fashions',
+                                itemStyle: {
+                                    color: '#546bfa'
                                 }
                             },
-                            labelLine: {
-                                show: false
+                            {
+                                value: 310, name: 'Electronics',
+                                itemStyle: {
+                                    color: '#3a9688'
+                                }
                             },
-                            data: [
-                                {
-                                    value: 335, name: 'Fashions',
-                                    itemStyle: {
-                                        color: '#546bfa'
-                                    }
-                                },
-                                {
-                                    value: 310, name: 'Electronics',
-                                    itemStyle: {
-                                        color: '#3a9688'
-                                    }
-                                },
-                                {
-                                    value: 234, name: 'Toys',
-                                    itemStyle: {
-                                        color: '#02a9f4'
-                                    }
-                                },
-                                {
-                                    value: 135, name: 'Vouchers',
-                                    itemStyle: {
-                                        color: '#f88c2b'
-                                    }
-                                },
-                            ]
-                        }
-                    ]
-                }
-            },
+                            {
+                                value: 234, name: 'Toys',
+                                itemStyle: {
+                                    color: '#02a9f4'
+                                }
+                            },
+                            {
+                                value: 135, name: 'Vouchers',
+                                itemStyle: {
+                                    color: '#f88c2b'
+                                }
+                            },
+                        ]
+                    }
+                ]
+            }
         },
-        methods: {
-            getColor(val) {
-                if (val > 70 && val <= 100) {
-                    return 'green'
-                } else if (val > 50 && val <= 70) {
-                    return 'blue'
-                }
-                return 'red'
-            },
-            getChipColor(status) {
-                if (status == 'Canceled') {
-                    return 'negative'
-                } else if (status == 'Sent') {
-                    return 'positive'
-                } else if (status == 'Pending') {
-                    return 'warning'
-                } else if (status == 'Paid') {
-                    return 'info'
-                } else {
-                    return 'dark'
-                }
+        caviteIncome() {
+          const caviteOrders = this.allOrders.filter(e => e.branchName == 'Cavite' && !e.isDeleted)
+          let total = 0
+          caviteOrders.forEach(order => {
+            total+=parseInt(order.totalAmount)
+          })
+          return total
+        },
+        bulacanIncome() {
+          const bulacanOrders = this.allOrders.filter(e => e.branchName == 'Bulacan' && !e.isDeleted)
+          let total = 0
+          bulacanOrders.forEach(order => {
+            total+=parseInt(order.totalAmount)
+          })
+          return total
+        },
+        totalExpenses() {
+          let total = 0
+          this.allExpenses.forEach(expense => {
+              total += parseInt(expense.expenseAmount)
+          })
+          return total
+        },
+        activeOrders() {
+          return this.allOrders.filter(e => !e.isDeleted)
+        },
+        productSizes() {
+          return this.$store.state.product.productSizes
+        },
+        milkTeaSales() {
+          let totalMilkTeaOrders = 0
+          this.activeOrders.forEach(order => {
+            let orderList = JSON.parse(order.orderList)
+            orderList = orderList.filter(product => {
+              const productSize = this.productSizes.find(size => { 
+                return (size.name == product.productSize && size.name != 'Add On') 
+              })
+              return (productSize && productSize.product_type == 'Milk Tea')
+            })
+            totalMilkTeaOrders += orderList.length
+          })
+          return totalMilkTeaOrders
+        },
+        snackSales() {
+          let snackOrders = 0
+          this.activeOrders.forEach(order => {
+            let orderList = JSON.parse(order.orderList)
+            orderList = orderList.filter(product => {
+              const productSize = this.productSizes.find(size => { 
+                return (size.name == product.productSize && size.name) 
+              })
+              return (productSize && productSize.product_type == 'Snacks')
+            })
+            snackOrders += orderList.length
+          })
+          return snackOrders
+        },
+        addOnSales() {
+          let activeOrders = this.allOrders.filter(e => !e.isDeleted)
+          let addOnOrders = 0
+          activeOrders.forEach(order => {
+            let orderList = JSON.parse(order.orderList)
+            orderList = orderList.filter(product => {
+              return (product.productSize == 'Add On')
+            })
+            addOnOrders += orderList.length
+          })
+          return addOnOrders
+        }
+    },
+    methods: {
+        getColor(val) {
+            if (val > 70 && val <= 100) {
+                return 'green'
+            } else if (val > 50 && val <= 70) {
+                return 'blue'
+            }
+            return 'red'
+        },
+        getChipColor(status) {
+            if (status == 'Canceled') {
+                return 'negative'
+            } else if (status == 'Sent') {
+                return 'positive'
+            } else if (status == 'Pending') {
+                return 'warning'
+            } else if (status == 'Paid') {
+                return 'info'
+            } else {
+                return 'dark'
             }
         }
     }
+}
 </script>
 
 <style scoped>

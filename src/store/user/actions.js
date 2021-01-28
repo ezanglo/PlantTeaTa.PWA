@@ -26,6 +26,16 @@ export const updateUserData = async function ({ state }, payload) {
   return userService.updateUser(payload)
 }
 
+// export const getUserDetails = function (context, userId) {
+//   let userDetails = null;
+//   context.state.allUsers.forEach(user => {
+//       if(user.id == userId){
+//         userDetails = user
+//       }
+//   })
+//   return userDetails
+// }
+
 /** Get all users from the firestore collection user
  */
 export const getCurrentUserCart = async function (context, id) {
@@ -66,4 +76,10 @@ export const removeCartProduct = async function (context, id) {
   const currentUserId = context.state.currentUser.id;
   await userService.removeCartProduct(currentUserId, id)
   context.commit('removeCartProduct', id);
+}
+
+export const clearCurrentUserCart = async function(context) {
+  const currentUserId = context.state.currentUser.id;
+  await userService.clearUserCart(currentUserId)
+  context.commit('setCurrentUserCart', []);
 }

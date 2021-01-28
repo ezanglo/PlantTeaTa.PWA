@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import { Loading, QSpinnerGears } from 'quasar'
 
 /**
  * Returns Firebase 's global namespace from which all Firebase services are accessed
@@ -63,8 +64,23 @@ export const handleOnAuthStateChanged = async (store, currentUser) => {
 
   // Get & bind the current user
   if (store.state.auth.isAuthenticated) {
+    Loading.show({
+      message: 'Loading, Please Wait..',
+      backgroundColor: 'grey',
+      spinner: QSpinnerGears,
+      customClass: 'loader'
+    })
     await store.dispatch('user/getCurrentUser', currentUser.uid)
     await store.dispatch('user/getCurrentUserCart')
+    await store.dispatch('user/getAllUsers')
+    await store.dispatch('product/getAllProducts')
+    await store.dispatch('product/getProductPrices')
+    await store.dispatch('product/getProductCategories')
+    await store.dispatch('product/getProductTypes')
+    await store.dispatch('product/getProductSizes')
+    await store.dispatch('order/getAllOrders')
+    await store.dispatch('expense/getAllExpenses')
+    Loading.hide()
   }
 
   // If the user looses authentication route
