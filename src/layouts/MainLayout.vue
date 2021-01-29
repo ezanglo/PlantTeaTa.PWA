@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lff">
     <q-header elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="leftDrawerOpen = !leftDrawerOpen" />
@@ -87,7 +87,14 @@
         />
       </q-tabs>
     </q-footer>
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="bg-grey-1" >
+    <q-drawer 
+      :mini="miniState"
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
+      v-model="leftDrawerOpen" 
+      show-if-above 
+      bordered 
+      content-class="bg-grey-1" >
       <q-list>
         <template v-for="(menuItem, index) in menuList">
           <q-item 
@@ -135,6 +142,7 @@ export default {
   name: 'MainLayout',
   data () {
     return {
+      miniState: true,
       leftDrawerOpen: false,
       userCart: false,
       menuList: [
@@ -203,7 +211,7 @@ export default {
   methods: {
     ...mapActions('auth', ['logoutUser']),
     ...mapActions('user', ['getCurrentUserCart']),
-    ...mapActions('product', ['getProductCategories'])
+    ...mapActions('product', ['getProductCategories']),
   }
 }
 </script>

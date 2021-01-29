@@ -1,10 +1,11 @@
-<template lang="pug">
+<template>
+<q-pull-to-refresh @refresh="refresh" color="primary">
   <q-page v-if="currentUser">
     <div class="background-photo">
         <div class="default-background" v-if="showBackgroundPhoto()">
             <q-img src="https://cdn.quasar.dev/img/material.png" style="height: 200px;"></q-img>
         </div>
-        <div class="user-background" v-else="v-else">
+        <div class="user-background" v-else>
             <q-img :src="currentUser.backgroundPhoto" style="height: 200px;"></q-img>
         </div>
     </div>
@@ -13,7 +14,7 @@
             <div class="default-user-image" v-if="showDefaultPhoto()">
                 <q-avatar round="round" color="blue-grey-10" icon="person" font-size="100px" size="120px" text-color="white"></q-avatar>
             </div>
-            <div class="user-image column items-center" v-else="v-else">
+            <div class="user-image column items-center" v-else>
                 <q-avatar class="q-mb-sm shadow-5" size="140px">
                     <q-img :src="currentUser.profilePhoto"></q-img>
                 </q-avatar>
@@ -39,12 +40,12 @@
     <q-dialog v-model="editUserDialog" full-height="full-height" persistent="persistent" @before-hide="setBlur">
         <user-settings></user-settings>
     </q-dialog>
-</q-page>
+  </q-page>
+</q-pull-to-refresh>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
-import { QSpinnerGears, QSpinnerRadio } from 'quasar'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'Profile',
   components: {
@@ -52,16 +53,6 @@ export default {
   },
   data () {
     return {}
-  },
-  created () {
-    // Boolean to check if network is available
-    const isOnline = window.navigator.onLine
-    this.$q.loading.show({
-      message: isOnline ? 'Loading your user information...' : 'Looks like you\'ve lost network connectivity. Please connect back to your network to access your data.',
-      backgroundColor: isOnline ? 'grey' : 'red-6',
-      spinner: isOnline ? QSpinnerGears : QSpinnerRadio,
-      customClass: 'loader'
-    })
   },
   mounted () {
     const { currentUser } = this
@@ -84,6 +75,11 @@ export default {
   },
   methods: {
     ...mapMutations('user', ['setEditUserDialog']),
+    ...mapActions('user', ['getCurrentUser']),
+    async refresh(done) {
+      await this.getCurrentUser(this.currentUser.id)
+      done()
+    },
     getUserData (attr) {
       return (this.currentUser[attr]) ? this.currentUser[attr] : 'Please update your profile'
     },

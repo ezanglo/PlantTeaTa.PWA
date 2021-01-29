@@ -1,4 +1,5 @@
 <template>
+<q-pull-to-refresh @refresh="refresh" color="primary">
   <q-page class="q-pa-sm">
     <q-table
       :data="allProducts"
@@ -11,13 +12,13 @@
       hide-bottom
     >
       <template v-slot:item="props">
-        <div :props="props" class="q-pa-xs col-grow col-xs-6 col-sm-3 col-md-2 col-lg-2">
+        <div :props="props" class="q-pa-xs col-grow col-xs-6 col-sm-4 col-md-3 col-lg-2">
           <q-card class="q-ma-xs my-card" >
             <q-item clickable @click="showAddToCartDialog(props.row)">
                 <q-item-section>
                   <q-item-label class="ellipsis"> {{props.row.productName}} </q-item-label>
                   <q-item-label class="ellipsis" caption>{{props.row.productCategory}} | {{props.row.productType}}</q-item-label>
-                  <q-btn class="q-mt-sm" style="width:100%" color="primary" outline>
+                  <q-btn size="sm" class="q-mt-sm" style="width:100%" color="primary" outline>
                     <div class="ellipsis">
                       <q-icon name="add_shopping_cart"/>
                       ADD TO CART
@@ -48,6 +49,7 @@
       </q-card>
     </q-dialog>
   </q-page>
+</q-pull-to-refresh>
 </template>
 
 <script>
@@ -108,6 +110,12 @@ export default {
   },
   methods: {
     ...mapActions('user', ['addProductToCart']),
+    ...mapActions('product', ['getAllProducts', 'getProductCategories']),
+    async refresh(done) {
+      await this.getAllProducts()
+      await this.getProductCategories()
+      done()
+    },
     setBlur () {
       this.$emit('setBlur')
     },

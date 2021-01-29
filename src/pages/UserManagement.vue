@@ -1,4 +1,5 @@
 <template>
+<q-pull-to-refresh @refresh="refresh" color="primary">
   <q-page class="q-pa-sm">
     <q-card>
       <q-table
@@ -78,6 +79,7 @@
       </q-table>
     </q-card>
   </q-page>
+</q-pull-to-refresh>
 </template>
 
 <script>
@@ -150,6 +152,11 @@ export default {
     ...mapGetters('user', ['allUsers'])
   },
   methods: {
+    ...mapActions('user', ['getAllUsers']),
+    async refresh(done) {
+      await this.getAllUsers()
+      done()
+    },
     exportTable() {
       // naive encoding to csv format
       const content = [this.columns.map(col => wrapCsvValue(col.label))]

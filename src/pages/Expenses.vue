@@ -1,4 +1,5 @@
 <template>
+<q-pull-to-refresh @refresh="refresh" color="primary">
   <q-page class="q-pa-sm">
     <q-card>
       <q-table
@@ -15,9 +16,9 @@
       >
       <template v-slot:top-right="props">
         <q-checkbox v-model="checkToday" class="q-mr-sm q-mb-sm" label="Today" />
-        <q-input v-model="totalAmount" readonly label="Total" dense clearable outlined class="q-mr-sm q-mb-sm" style="width:20vh" />
-        <q-select label="Branch" v-model="filters.branch" :options="branches" class="q-mr-sm q-mb-sm" style="width:20vh" dense clearable outlined />
-        <q-input label="Date" v-model="filters.date" mask="date" class="q-mr-sm q-mb-sm" style="width:20vh" dense outlined>
+        <q-input v-model="totalAmount" readonly label="Total" dense clearable outlined class="q-mr-sm q-mb-sm" style="width:140px"/>
+        <q-select label="Branch" v-model="filters.branch" :options="branches" class="q-mr-sm q-mb-sm" style="min-width:120px" dense clearable outlined />
+        <q-input label="Date" v-model="filters.date" mask="date" class="q-mr-sm q-mb-sm" style="width:140px" dense outlined>
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -98,6 +99,7 @@
       </q-card>
     </q-dialog>
   </q-page>
+</q-pull-to-refresh>
 </template>
 
 <script>
@@ -243,7 +245,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions('expense', ['deleteExpense', 'addExpense', 'updateExpense']),
+    ...mapActions('expense', ['getAllExpenses','deleteExpense', 'addExpense', 'updateExpense']),
+    ...mapActions('user', ['getAllUsers']),
+    async refresh(done) {
+      await this.getAllUsers()
+      await this.getAllExpenses()
+      done()
+    },
     setBlur () {
       this.$emit('setBlur')
     },

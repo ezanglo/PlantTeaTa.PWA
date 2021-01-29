@@ -1,4 +1,5 @@
 <template>
+<q-pull-to-refresh @refresh="refresh" color="primary">
   <q-page class="q-pa-sm">
     <div class="row q-col-gutter-sm  q-py-sm">
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -162,6 +163,7 @@
       </q-card>
     </q-dialog>
   </q-page>
+</q-pull-to-refresh>
 </template>
 
 <script>
@@ -269,6 +271,11 @@ export default {
   methods: {
     ...mapActions('product', ['getProductCategories', 'getProductTypes', 'updateProductCategory', 'addProductCategory',
             'deleteProductCategory']),
+    async refresh(done) {
+      await this.getProductCategories()
+      await this.getProductTypes()
+      done()
+    },
     showProductTypeDialog(type){
       this.currentProductType = type
       this.productTypeDialog = true

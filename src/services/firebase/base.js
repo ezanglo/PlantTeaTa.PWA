@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { Loading, QSpinnerGears } from 'quasar'
+import { Loading, QSpinnerGears, QSpinnerRadio } from 'quasar'
 
 /**
  * Returns Firebase 's global namespace from which all Firebase services are accessed
@@ -64,10 +64,11 @@ export const handleOnAuthStateChanged = async (store, currentUser) => {
 
   // Get & bind the current user
   if (store.state.auth.isAuthenticated) {
+    const isOnline = window.navigator.onLine
     Loading.show({
-      message: 'Loading, Please Wait..',
-      backgroundColor: 'grey',
-      spinner: QSpinnerGears,
+      message: isOnline ? 'Loading...' : 'Looks like you\'ve lost network connectivity. Please connect back to your network to access your data.',
+      backgroundColor: isOnline ? 'grey' : 'red-6',
+      spinner: isOnline ? QSpinnerGears : QSpinnerRadio,
       customClass: 'loader'
     })
     await store.dispatch('user/getCurrentUser', currentUser.uid)

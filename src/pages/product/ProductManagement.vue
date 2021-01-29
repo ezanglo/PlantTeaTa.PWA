@@ -1,4 +1,5 @@
 <template>
+<q-pull-to-refresh @refresh="refresh" color="primary">
   <q-page class="q-pa-sm">
     <q-card>
       <q-table
@@ -37,8 +38,8 @@
             </q-tooltip>
           </q-btn>
           
-          <q-select label="Types" v-model="filters.type" :options="productTypes" class="q-mr-sm" style="width:20vh" dense clearable outlined />
-          <q-select label="Categories" v-model="filters.category" :options="productCategories" option-value="categoryName" option-label="categoryName" style="width:20vh" dense clearable outlined/>
+          <q-select label="Types" v-model="filters.type" :options="productTypes" class="q-mr-sm" style="min-width:120px" dense clearable outlined />
+          <q-select label="Categories" v-model="filters.category" :options="productCategories" option-value="categoryName" option-label="categoryName" style="min-width:120px" dense clearable outlined/>
         </template>
         <template v-slot:body-cell-price="props">
           <q-td :props="props" style="min-width:15em">
@@ -155,6 +156,7 @@
       </q-card>
     </q-dialog>
   </q-page>
+</q-pull-to-refresh>
 </template>
 
 <script>
@@ -265,7 +267,16 @@ export default {
   },
   methods: {
     ...mapMutations('product', ['setProductDialog']),
-    ...mapActions('product', ['deleteProduct', 'addProductPrice', 'deleteProductPrice']),
+    ...mapActions('product', ['deleteProduct', 'addProductPrice', 'deleteProductPrice','getAllProducts', 
+          'getProductCategories', 'getProductTypes', 'getProductPrices', 'getProductSizes']),
+    async refresh(done) {
+      await this.getAllProducts()
+      await this.getProductCategories()
+      await this.getProductTypes()
+      await this.getProductPrices()
+      await this.getProductSizes()
+      done()
+    },
     async deleteCurrentProduct() {
       try {
         await this.deleteProduct(this.currentProduct.id)
