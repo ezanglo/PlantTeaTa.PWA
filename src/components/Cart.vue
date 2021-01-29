@@ -1,5 +1,5 @@
 <template>
-  <q-card style="min-width: 450px;">
+  <q-card style="min-width: 400px;">
     <q-form @submit="checkOutOrders" class="full-height column">
       <q-card-section class="bg-teal text-white col-auto">
         <div class="text-h6">{{title}}</div>
@@ -12,11 +12,9 @@
       </div>
       <q-card-section class="col overflow-auto">
         <q-item v-for="product in cartItems" :key="product.id" class="row justify-between items-center q-mb-none">
-          <q-item-section class="col-2">
+          <q-item-section class="col-4">
             <q-item-label :title="product.productName">{{product.productName | truncate(25, '...')}}</q-item-label>
-          </q-item-section>
-          <q-item-section class="col-2 content-center">
-            <q-item-label>{{product.productSize}}</q-item-label>
+            <q-item-label caption>{{product.productSize}}</q-item-label>
           </q-item-section>
           <q-item-section class="col-3 content-center">
             <div class="row items-center" style="width:auto">

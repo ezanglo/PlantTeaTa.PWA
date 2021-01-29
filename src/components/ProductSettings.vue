@@ -1,5 +1,5 @@
 <template>
-  <q-card style="min-width: 40vw;">
+  <q-card style="min-width: 400px;">
     <q-form @submit="saveProductData" class="full-height column">
       <q-card-section class="bg-teal text-white col-auto">
           <div class="text-h6">{{title}}</div>

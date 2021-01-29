@@ -108,13 +108,11 @@
           <q-separator :key="'sep' + index"  v-if="menuItem.separator" />
         </template>
       </q-list>
-
     </q-drawer>
     <q-dialog 
       v-model="userCart" 
       full-height
-      :maximized="$q.screen.lt.sm?true:false" 
-      position="right"
+      :maximized="$q.screen.lt.sm?true:false"
       transition-show="slide-left"
       transition-hide="slide-right">
         <cart></cart>

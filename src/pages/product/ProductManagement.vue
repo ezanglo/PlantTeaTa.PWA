@@ -86,18 +86,16 @@
     </q-card>
     <q-dialog 
       v-model="productDialog" 
-      full-height
       persistent
       :maximized="$q.screen.lt.sm?true:false" 
       transition-show="slide-left"
       transition-hide="slide-right"
       @before-hide="setBlur">
         <product-settings 
-        :meta="currentProduct" 
-        :productCategories="productCategories"
-        :productTypes="productTypes"
-        :productSizes="productSizes"
-        ></product-settings>
+          :meta="currentProduct" 
+          :productCategories="productCategories"
+          :productTypes="productTypes"
+          :productSizes="productSizes"/>
     </q-dialog>
     <q-dialog v-model="confirmDialog" persistent>
       <q-card>

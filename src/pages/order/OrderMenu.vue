@@ -11,35 +11,42 @@
       hide-bottom
     >
       <template v-slot:item="props">
-        <div class="q-pa-xs col-grow col-xs-6 col-sm-3 col-md-3 col-lg-2">
-          <q-card class="q-ma-xs" :props="props">
-            <q-img style :src="productImage(props.row.productType)">
-              <div class="absolute-bottom">
-                  <div class="text-h6"> {{props.row.productName}} </div>
-                  <div class="text-subtitle2"> {{props.row.productCategory}} | {{props.row.productType}}</div>
-              </div>
-            </q-img>
-            <q-list>
-              <q-item v-if="props.row.productPrices.length == 0">
+        <div :props="props" class="q-pa-xs col-grow col-xs-6 col-sm-3 col-md-2 col-lg-2">
+          <q-card class="q-ma-xs my-card" >
+            <q-item clickable @click="showAddToCartDialog(props.row)">
                 <q-item-section>
-                  <q-item-label>Not Available</q-item-label>
-                  <q-item-label caption>No Price found.</q-item-label>
+                  <q-item-label class="ellipsis"> {{props.row.productName}} </q-item-label>
+                  <q-item-label class="ellipsis" caption>{{props.row.productCategory}} | {{props.row.productType}}</q-item-label>
+                  <q-btn class="q-mt-sm" style="width:100%" color="primary" outline>
+                    <div class="ellipsis">
+                      <q-icon name="add_shopping_cart"/>
+                      ADD TO CART
+                    </div>
+                  </q-btn>  
                 </q-item-section>
               </q-item>
-              <q-item v-for="price in props.row.productPrices" :key="price.id" clickable @click="addToCart(props.row, price)">
-                <q-item-section avatar>
-                  <q-icon color="blue" name="fa fa-cart-plus" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ price.productPrice | toCurrency }}</q-item-label>
-                  <q-item-label caption>{{ price.productSize }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
           </q-card>
         </div>
       </template>
     </q-table>
+    <q-dialog v-model="addToCartDialog" transition-show="scale" transition-hide="scale">
+      <q-card style="width: 300px" class="column">
+        <q-card-section>
+          <div class="text-h6">{{currentProduct.productName}}</div>
+          <q-item-label caption>{{currentProduct.productCategory}} | {{currentProduct.productType}}</q-item-label>
+        </q-card-section>
+        <q-card-section>
+          <q-item v-for="price in currentProduct.productPrices" :key="price.id">
+            <q-btn color="primary" style="width: 100%" @click="addToCart(currentProduct, price)">
+              {{price.productPrice | toCurrency}} / {{price.productSize}}
+            </q-btn>
+          </q-item>
+        </q-card-section>
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="CANCEL" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -50,6 +57,8 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 export default {
   data() {
     return {
+      addToCartDialog: false,
+      currentProduct: {},
       customer: {},
       columns: [
         {
@@ -102,9 +111,6 @@ export default {
     setBlur () {
       this.$emit('setBlur')
     },
-    clickItem(item){
-      
-    },
     productImage(type) {
       if(type == "Snacks"){
         return require('src/assets/tusok.jpg')
@@ -113,53 +119,41 @@ export default {
         return require('src/assets/milktea.jpg')
       }
     },
-    addToCart(product, price){
-      const productPrice = this.$options.filters.toCurrency(price.productPrice)
-      this.$q.dialog({
-        title: 'Add to Cart',
-        message: 
-          product.productName + ' | ' +
-          price.productSize + ' | ' +
-          productPrice
-          ,
-        cancel: true,
-        persistent: true
-      }).onOk(async () => {
-        try {
-          await this.addProductToCart({
-            productName: product.productName,
-            productQuantity: 1,
-            productSize: price.productSize
-          })
-          this.$q.notify({
-            message: product.productName + '(' + price.productSize + ') has been added to cart',
-            type: 'positive',
-            position: 'bottom-left',
-            actions: [
-              { label: 'Dismiss', color: 'white' }
-            ]
-          })
-        } catch (err) {
-          this.$q.notify({
-            message: `Looks like a problem adding product to cart: ${err}`,
-            color: 'negative',
-            position: 'bottom-left',
-            actions: [
-              { label: 'Dismiss', color: 'white' }
-            ]
-          })
-        } finally {
-
-        }
-      }).onCancel(() => {
-        
-      })
+    showAddToCartDialog(product){
+      this.addToCartDialog = true
+      this.currentProduct = {...product}
+    },
+    async addToCart(product, price){
+      try {
+        await this.addProductToCart({
+          productName: product.productName,
+          productQuantity: 1,
+          productSize: price.productSize
+        })
+        this.$q.notify({
+          message: product.productName + '(' + price.productSize + ') has been added to cart',
+          type: 'positive',
+          position: 'bottom-left',
+          actions: [
+            { label: 'Dismiss', color: 'white' }
+          ]
+        })
+        this.addToCartDialog = false
+      } catch (err) {
+        this.$q.notify({
+          message: `Looks like a problem adding product to cart: ${err}`,
+          color: 'negative',
+          position: 'bottom-left',
+          actions: [
+            { label: 'Dismiss', color: 'white' }
+          ]
+        })
+      }
     }
   }
 }
 </script>
 <style lang="sass" scoped>
 .my-card
-  width: 100%
-  max-width: 350px
+  border-left: 3px solid teal
 </style>
