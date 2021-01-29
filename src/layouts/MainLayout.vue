@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lff">
+  <q-layout view="hHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="leftDrawerOpen = !leftDrawerOpen" />
@@ -7,8 +7,6 @@
         <q-toolbar-title>
           Plant Tea-ta
         </q-toolbar-title>
-
-        <q-space/>
 
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn round dense flat color="white" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"

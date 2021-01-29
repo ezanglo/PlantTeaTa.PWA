@@ -12,7 +12,7 @@
       hide-bottom
     >
       <template v-slot:item="props">
-        <div :props="props" class="q-pa-xs col-grow col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <div :props="props" class="q-pa-xs col-xs-6 col-sm-4 col-md-3 col-lg-2">
           <q-card class="q-ma-xs my-card" >
             <q-item clickable @click="showAddToCartDialog(props.row)">
                 <q-item-section>

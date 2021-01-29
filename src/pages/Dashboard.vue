@@ -6,7 +6,7 @@
         <div class="row q-col-gutter-sm ">
           <div class="col-md-3 col-sm-12 col-xs-12">
             <q-card>
-              <q-item style="background-color: #546bfa" class="q-pa-none ">
+              <q-item style="background-color: #7cb342" class="q-pa-none ">
                 <q-item-section class=" q-pa-md q-ml-none  text-white">
                   <q-item-label class="text-white text-h6 text-weight-bolder">{{getTotalSalesAmount(allActiveOrders) - totalExpenses | toCurrency}}</q-item-label>
                   <q-item-label>Net Income</q-item-label>
@@ -32,7 +32,7 @@
           </div>
           <div class="col-md-3 col-sm-12 col-xs-12">
             <q-card>
-              <q-item style="background-color: #7cb342" class="q-pa-none ">
+              <q-item style="background-color: #546bfa" class="q-pa-none ">
                 <q-item-section class=" q-pa-md q-ml-none  text-white">
                   <q-item-label class="text-white text-h6 text-weight-bolder">{{totalExpenses | toCurrency}}</q-item-label>
                   <q-item-label>Expenses</q-item-label>
