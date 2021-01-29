@@ -24,14 +24,20 @@
           </q-btn>
 
           <q-btn round dense flat color="white" icon="notifications">
-            <q-badge color="red" text-color="white" floating>
-              5
+            <q-badge color="red" text-color="white" v-if="notifications.length > 0" floating>
+              {{notifications.length}}
             </q-badge>
             <q-menu>
               <q-list style="min-width: 100px">
-                <messages></messages>
                 <q-card class="text-center no-shadow no-border">
-                  <q-btn label="View All" style="max-width: 120px !important" flat dense
+                  <q-item v-if="notifications.length <= 0" style="width:auto">
+                    <div>
+                      <div class="text-center">
+                        No new notifications
+                      </div>
+                    </div>
+                  </q-item>
+                  <q-btn v-else label="View All" style="max-width: 120px !important" flat dense
                          class="text-indigo-8"></q-btn>
                 </q-card>
               </q-list>
@@ -137,11 +143,11 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   components: {
     'cart': () => import('../components/Cart.vue'),
-    'messages': () => import('./Messages.vue')
   },
   name: 'MainLayout',
   data () {
     return {
+      notifications: [],
       miniState: true,
       leftDrawerOpen: false,
       userCart: false,

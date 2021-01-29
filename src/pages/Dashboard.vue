@@ -12,7 +12,7 @@
                   <q-item-label>Net Income</q-item-label>
                 </q-item-section>
                 <q-item-section side class="q-mr-md text-white">
-                  <q-icon name="credit_card" color="white" size="44px"></q-icon>
+                  <q-icon name="fas fa-dollar-sign" color="white" size="44px"></q-icon>
                 </q-item-section>
               </q-item>
             </q-card>
@@ -288,13 +288,14 @@ export default {
       ...mapGetters('order', ['allOrders']),
       ...mapGetters('expense', ['allExpenses']),
       ...mapGetters('user', ['allUsers']),
+      ...mapGetters('product', ['allProducts']),
       getSalesOptions() {
         return {
           tooltip: {
               trigger: 'axis',
               axisPointer: {// Coordinate axis indicator, coordinate axis trigger is valid
                   type: 'shadow' // The default is a straight line, optional:'line' |'shadow'
-              }
+              },
           },
           grid: {
               left: '2%',
@@ -340,10 +341,16 @@ export default {
         }
       },
       getPieOptions() {
+        const self = this
         return {
           tooltip: {
               trigger: 'item',
-              formatter: '{a} <br/>{b}: {c} ({d}%)'
+              formatter: function(params){
+                return params.seriesName + '<br/>'+
+                  params.data.name + ': ' + 
+                  self.$options.filters.toCurrency(params.data.value) + 
+                  ' ('+ params.percent +'%)'
+              }
           },
           legend: {
               bottom: 10,
@@ -372,21 +379,21 @@ export default {
                   },
                   data: [
                     {
-                        value: this.getTodaySales(this.milkTeaSales).length, 
+                        value: this.getTotalProductAmount(this.getTodaySales(this.milkTeaSales)), 
                         name: 'Milk Tea',
                         itemStyle: {
                             color: '#546bfa'
                         }
                     },
                     {
-                        value: this.getTodaySales(this.snackSales).length, 
+                        value: this.getTotalProductAmount(this.getTodaySales(this.snackSales)), 
                         name: 'Snacks',
                         itemStyle: {
                             color: '#3a9688'
                         }
                     },
                     {
-                        value: this.getTodaySales(this.addOnSales).length, 
+                        value: this.getTotalProductAmount(this.getTodaySales(this.addOnSales)), 
                         name: 'Add Ons',
                         itemStyle: {
                             color: '#02a9f4'
@@ -439,7 +446,8 @@ export default {
             }
             return product = {
               ...product,
-              createdDate: createdDate
+              createdDate: createdDate,
+              productPrice: this.getPriceFromProduct(product)
             }
           })]
         })
@@ -462,7 +470,8 @@ export default {
             }
             return product = {
               ...product,
-              createdDate: createdDate
+              createdDate: createdDate,
+              productPrice: this.getPriceFromProduct(product)
             }
           })]
         })
@@ -483,7 +492,8 @@ export default {
             }
             return product = {
               ...product,
-              createdDate: createdDate
+              createdDate: createdDate,
+              productPrice: this.getPriceFromProduct(product)
             }
           })]
         })
@@ -497,6 +507,20 @@ export default {
       ...mapActions('order', ['getAllOrders']),
       ...mapActions('expense', ['getAllExpenses']),
       ...mapActions('user', ['getAllUsers']),
+      getPriceFromProduct(item){
+        const product = this.allProducts.find(function(product){
+          return product.productName == item.productName
+        })
+        if(product){
+          let price = product.productPrices.find(function(price){
+            return price.productSize == item.productSize
+          })
+          if(price){
+            return price
+          }
+        }
+        return null
+      },
       showOrderPreview(order) {
         this.currentOrder = order
         this.orderPreview = true
@@ -505,6 +529,13 @@ export default {
         let total = 0
         sales.forEach(order => {
           total+=parseInt(order.totalAmount)
+        })
+        return total
+      },
+      getTotalProductAmount(products) {
+        let total = 0
+        products.forEach(product => {
+          total+=parseInt(product.productPrice.productPrice)
         })
         return total
       },

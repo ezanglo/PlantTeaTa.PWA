@@ -3,7 +3,7 @@ export default ({ Vue, store}) => {
         if(isNaN(value)){
             return value;
         }
-        var formatter = new Intl.NumberFormat('en-US', {
+        var formatter = new Intl.NumberFormat('en-PH', {
             style: 'currency',
             currency: 'PHP',
             minimumFractionDigits: 2
