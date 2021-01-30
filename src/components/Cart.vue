@@ -1,5 +1,5 @@
 <template>
-  <q-card style="min-width: 400px;">
+  <q-card :style="$q.screen.lt.sm?'':'min-width: 450px;'">
     <q-form @submit="checkOutOrders" class="full-height column">
       <q-card-section class="bg-teal text-white col-auto">
         <div class="text-h6">{{title}}</div>
@@ -32,8 +32,20 @@
         </q-item>
       </q-card-section>
       <q-separator/>
-      <q-card-section v-if="cartItems.length > 0" align="right">
-        <q-item-label>Total: {{totalCartAmount | toCurrency}}</q-item-label>
+      <q-card-section v-if="cartItems.length > 0" align="right" class="row justify-between items-center q-mb-none">
+        <q-item v-if="!readOnly">
+          <q-select style="width:90px;" class="q-mb-sm q-mr-sm" color="black" v-model="cartBranch" :options="branches" dense/>
+          <q-input class="q-mb-sm" v-model="cartDateString" style="width:140px" dense readonly>
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                  <q-date v-model="cartDate" v-close-popup/>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </q-item>
+        <q-item-label class="text-h6">Total: {{totalCartAmount | toCurrency}}</q-item-label>
       </q-card-section>
       <q-card-actions align="right" class="col-auto">
         <q-btn flat label="LAST ORDER" color="primary" @click="showLastOrder" v-if="!readOnly"/>
@@ -46,6 +58,8 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { date } from 'quasar'
+
 export default {
   name: 'Cart',
   props: {
@@ -55,14 +69,17 @@ export default {
   },
   data() {
     return {
-      currentOrder: this.meta
+      currentOrder: this.meta,
+      cartDate: date.formatDate(new Date(), 'YYYY/MM/DD'),
+      cartBranch: '',
+      branches: ['Cavite', 'Bulacan']
     }
   },
   mounted: function() {
-    
+    this.cartBranch = this.currentUser.branchName
   },
   computed: {
-    ...mapGetters('user', ['currentUserCart']),
+    ...mapGetters('user', ['currentUser','currentUserCart']),
     ...mapGetters('product', ['allProducts']),
     totalCartAmount: {
       get(){
@@ -90,6 +107,14 @@ export default {
       get() {
         return (this.currentOrder) ? 'ORDER: ' + this.currentOrder.id.toUpperCase() : 'Your Cart'
       }
+    },
+    cartDateString: {
+      get() {
+        return new Date(this.cartDate).toDateString()
+      },
+      set() {
+        return
+      }
     }
   },
   methods: {
@@ -113,7 +138,9 @@ export default {
           await this.addOrder({
             orderList: JSON.stringify(this.cartItems),
             totalAmount: this.totalCartAmount,
-            orderDescription: (data) ? data : ''
+            orderDescription: (data) ? data : '',
+            branchName: this.cartBranch,
+            createdDate: this.cartDate
           })
           this.$q.notify({
             message: 'Order Complete!',

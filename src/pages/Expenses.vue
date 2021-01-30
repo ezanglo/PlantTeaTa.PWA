@@ -318,11 +318,12 @@ export default {
       const filteredRows = rows.filter((row, i) => {
         
         let branch_filter = (terms.branch) && terms.branch == row.branchName
-
+        
+        let createdDate = row.createdDate
         if(!(row.createdDate instanceof Date)){
-          row.createdDate = row.createdDate.toDate()
+          createdDate = row.createdDate.toDate()
         }
-        let rowDate = date.formatDate(row.createdDate, 'YYYY/MM/DD')
+        let rowDate = date.formatDate(createdDate, 'YYYY/MM/DD')
         let date_filter = (terms.date) && terms.date == rowDate
         
         let match = (
@@ -332,10 +333,10 @@ export default {
         
         if((!terms.date || date_filter) && (!terms.branch || branch_filter)){
           match = true
-          totalFilteredAmount += row.expenseAmount
+          totalFilteredAmount += parseInt(row.expenseAmount)
         }
 
-        return match
+        return true
 
       })
       

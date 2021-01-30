@@ -14,9 +14,8 @@ export const updateOrder = async function ({ state, commit }, payload) {
 export const addOrder = async function (context, payload) {
   const order_payload = {
     ...payload,
-    branchName: store.state.user.currentUser.branchName,
     createdBy: store.state.user.currentUser.id,
-    createdDate: new Date(),
+    createdDate: new Date(payload.createdDate),
     isDeleted: false
   }
   const doc = await orderService.insertOrder(order_payload);

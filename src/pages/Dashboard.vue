@@ -21,7 +21,7 @@
             <q-card>
               <q-item style="background-color: #3a9688" class="q-pa-none">
                 <q-item-section class="q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">{{bulacanIncome + caviteIncome | toCurrency}}</q-item-label>
+                  <q-item-label class="text-white text-h6 text-weight-bolder">{{getTotalSalesAmount(allActiveOrders) | toCurrency}}</q-item-label>
                   <q-item-label>Gross Income</q-item-label>
                 </q-item-section>
                 <q-item-section side class="q-mr-md text-white">
@@ -355,7 +355,7 @@ export default {
           legend: {
               bottom: 10,
               left: 'center',
-              data: ['Milk Tea', 'Snacks', 'Add Ons']
+              data: ['Cavite', 'Bulacan']
           },
           series: [
               {
@@ -379,38 +379,29 @@ export default {
                   },
                   data: [
                     {
-                        value: this.getTotalProductAmount(this.getTodaySales(this.milkTeaSales)), 
-                        name: 'Milk Tea',
+                        value: this.getTotalSalesAmount(this.getTodaySales(this.bulacanSales)), 
+                        name: 'Bulacan',
                         itemStyle: {
                             color: '#546bfa'
                         }
                     },
                     {
-                        value: this.getTotalProductAmount(this.getTodaySales(this.snackSales)), 
-                        name: 'Snacks',
+                        value: this.getTotalSalesAmount(this.getTodaySales(this.caviteSales)), 
+                        name: 'Cavite',
                         itemStyle: {
                             color: '#3a9688'
                         }
                     },
-                    {
-                        value: this.getTotalProductAmount(this.getTodaySales(this.addOnSales)), 
-                        name: 'Add Ons',
-                        itemStyle: {
-                            color: '#02a9f4'
-                        }
-                    }
                   ]
               }
           ]
         }
       },
-      caviteIncome() {
-        const caviteOrders = this.allActiveOrders.filter(e => e.branchName == 'Cavite')
-        return this.getTotalSalesAmount(caviteOrders)
+      caviteSales() {
+        return this.allActiveOrders.filter(e => e.branchName == 'Cavite')
       },
-      bulacanIncome() {
-        const bulacanOrders = this.allActiveOrders.filter(e => e.branchName == 'Bulacan')
-        return this.getTotalSalesAmount(bulacanOrders)
+      bulacanSales() {
+        return this.allActiveOrders.filter(e => e.branchName == 'Bulacan')
       },
       todaySalesAmount() {
         const todayOrders = this.getTodaySales(this.allActiveOrders)
