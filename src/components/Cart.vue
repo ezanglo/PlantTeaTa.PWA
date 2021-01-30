@@ -32,10 +32,10 @@
         </q-item>
       </q-card-section>
       <q-separator/>
-      <q-card-section v-if="cartItems.length > 0" align="right" class="row justify-between items-center q-mb-none">
-        <q-item v-if="!readOnly">
-          <q-select style="width:90px;" class="q-mb-sm q-mr-sm" color="black" v-model="cartBranch" :options="branches" dense/>
-          <q-input class="q-mb-sm" v-model="cartDateString" style="width:140px" dense readonly>
+      <q-card-section v-if="cartItems.length > 0" align="right">
+        <q-item v-if="!readOnly" class="q-pr-none justify-end">
+          <q-select style="width:90px;" class="q-mr-sm" color="black" v-model="cartBranch" :options="branches" dense/>
+          <q-input v-model="cartDateString" style="width:140px" dense readonly>
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
