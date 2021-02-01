@@ -15,7 +15,6 @@ export const addOrder = async function (context, payload) {
   const order_payload = {
     ...payload,
     createdBy: store.state.user.currentUser.id,
-    createdDate: new Date(payload.createdDate),
     isDeleted: false
   }
   const doc = await orderService.insertOrder(order_payload);

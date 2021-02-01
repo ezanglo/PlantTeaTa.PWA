@@ -71,8 +71,6 @@ export const handleOnAuthStateChanged = async (store, currentUser) => {
       spinner: isOnline ? QSpinnerGears : QSpinnerRadio,
       customClass: 'loader'
     })
-    await store.dispatch('user/getCurrentUser', currentUser.uid)
-    await store.dispatch('user/getCurrentUserCart')
     await store.dispatch('user/getAllUsers')
     await store.dispatch('product/getAllProducts')
     await store.dispatch('product/getProductPrices')
@@ -81,6 +79,8 @@ export const handleOnAuthStateChanged = async (store, currentUser) => {
     await store.dispatch('product/getProductSizes')
     await store.dispatch('order/getAllOrders')
     await store.dispatch('expense/getAllExpenses')
+    await store.dispatch('user/getCurrentUser', currentUser.uid)
+    await store.dispatch('user/getCurrentUserCart')
     Loading.hide()
   }
 

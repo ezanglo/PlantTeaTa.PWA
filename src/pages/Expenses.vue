@@ -174,10 +174,8 @@ export default {
           field: "expenseDate",
           format: function(val){
             if(val){
-              if(!(val instanceof Date)){
-                val = val.toDate()
-              }
-              return val.toDateString()
+              const phTimeDate = self.$options.filters.toPHTimezone(val)
+              return date.formatDate(phTimeDate, 'ddd MMM DD YYYY hh:mm A')
             }
           },
           sortable: true
@@ -319,10 +317,7 @@ export default {
         
         let branch_filter = (terms.branch) && terms.branch == row.branchName
         
-        let createdDate = row.createdDate
-        if(!(row.createdDate instanceof Date)){
-          createdDate = row.createdDate.toDate()
-        }
+        let createdDate = this.$options.filters.toPHTimezone(row.createdDate)
         let rowDate = date.formatDate(createdDate, 'YYYY/MM/DD')
         let date_filter = (terms.date) && terms.date == rowDate
         

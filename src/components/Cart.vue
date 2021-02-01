@@ -135,12 +135,14 @@ export default {
         persistent: true
       }).onOk(async data => {
         try {
+          let today = date.formatDate(new Date(), 'YYYY/MM/DD')
+          // console.log(date.formatDate(new Date(), 'ddd MMM DD YYYY hh:mm A'));
           await this.addOrder({
             orderList: JSON.stringify(this.cartItems),
             totalAmount: this.totalCartAmount,
             orderDescription: (data) ? data : '',
             branchName: this.cartBranch,
-            createdDate: this.cartDate
+            createdDate: this.cartDate == today ? new Date(): new Date(this.cartDate)
           })
           this.$q.notify({
             message: 'Order Complete!',

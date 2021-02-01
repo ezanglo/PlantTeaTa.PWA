@@ -22,8 +22,9 @@ export const getAllUsers = async function (context) {
  * @param  {String} id
  * @param  {Object} payload
  */
-export const updateUserData = async function ({ state }, payload) {
-  return userService.updateUser(payload)
+export const updateUserData = async function (context, payload) {
+  await userService.updateUser(payload)
+  context.commit('updateUser', payload);
 }
 
 // export const getUserDetails = function (context, userId) {

@@ -15,9 +15,9 @@
             <div class="default-user-image column items-center" v-if="showDefaultPhoto()">
                 <q-avatar class="q-mb-sm" round="round" color="blue-grey-10" icon="person" font-size="110px" size="180px" text-color="white"></q-avatar><span class="text-caption text-blue-grey-10">Click to edit</span></div>
             <div class="user-image column items-center" v-else>
-                <q-avatar class="q-mb-sm shadow-5" size="180px" @click="showPhotoUpload('profile')">
-                    <q-img :src="currentUser.profilePhoto"></q-img>
-                </q-avatar><span class="text-blue-grey-10"><q-icon class="q-mr-sm" color="blue-grey-10" name="edit" size="16px"></q-icon>Click to edit</span></div>
+            <q-avatar class="q-mb-sm shadow-5" size="180px" @click="showPhotoUpload('profile')">
+                <q-img :src="currentUser.profilePhoto"></q-img>
+            </q-avatar><span class="text-blue-grey-10"><q-icon class="q-mr-sm" color="blue-grey-10" name="edit" size="16px"></q-icon>Click to edit</span></div>
         </div>
         <section class="user-info">
             <h6 class="q-mt-none q-mb-md text-center">Edit Your Profile</h6>
@@ -29,20 +29,6 @@
             </div>
             <div class="row justify-between items-center q-mb-lg"><label class="col-3" for="mobile">Mobile</label>
                 <q-input class="col" id="mobile" v-model="mobile" borderless="borderless" dense="dense" hint="+63(###) ###-####" mask="+##(###) ###-####" type="text"></q-input>
-            </div>
-            <div class="row justify-between items-center q-mb-lg">
-              <label class="col-3" for="mobile">Branch</label>
-              <q-select 
-                class="col" 
-                dense outlined
-                color="primary"
-                for="branch"
-                lazy-rules="lazy-rules"
-                name="branch"
-                style="width: 100%"
-                v-model="branchName"
-                :options="branchNames"
-              />
             </div>
         </section>
         <div class="row justify-between q-my-lg q-px-md absolute-bottom">
@@ -78,12 +64,7 @@ export default {
       fullName: state.fullName,
       mobile: state.mobile,
       photoType: '',
-      photoUpload: false,
-      branchName: 'Cavite',
-      branchNames: [
-        'Cavite',
-        'Bulacan'
-      ]
+      photoUpload: false
     }
   },
   computed: {
@@ -107,7 +88,7 @@ export default {
       this.photoType = ''
     },
     async saveUserData () {
-      const { currentUser, email, fullName, mobile, branchName } = this
+      const { currentUser, email, fullName, mobile } = this
       this.$q.loading.show({
         message: 'Updating your data, please stand by...',
         customClass: 'text-h3, text-bold'
@@ -118,7 +99,6 @@ export default {
           email,
           fullName,
           mobile,
-          branchName
         })
       } catch (err) {
         this.$q.notify({

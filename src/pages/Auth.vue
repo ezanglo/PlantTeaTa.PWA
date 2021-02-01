@@ -8,6 +8,18 @@
     <h5 class="text-center">{{ getAuthType }} to Plant Tea-ta!</h5>
     <q-form class="authentication q-gutter-y-md" ref="emailAuthenticationForm" @submit="onSubmit">
       <q-input
+        v-if="isRegistration"
+        v-model="fullName"
+        outlined
+        color="primary"
+        data-cy="fullName"
+        for="fullName"
+        name="fullName"
+        label="FULL NAME"
+        type="text"
+        :rules="[val => !!val || '*Field is required']"
+      />
+      <q-input
         v-model="email"
         outlined
         autocomplete="email"
@@ -66,8 +78,8 @@
 
       <p class="q-mt-md q-mb-none text-center">
           <router-link class="text-blue" :to="routeAuthentication">
-            <span v-if="isRegistration">Need to login?</span>
-            <span v-else>Need to create an account?</span>
+            <span @click="reset" v-if="isRegistration">Need to login?</span>
+            <span @click="reset" v-else>Need to create an account?</span>
           </router-link>
       </p>
       <p class="q-ma-sm text-center">
@@ -95,6 +107,7 @@ export default {
   },
   data () {
     return {
+      fullName: null,
       email: null,
       isPwd: true,
       password: null,
@@ -104,7 +117,7 @@ export default {
   methods: {
     ...mapActions('auth', ['createNewUser', 'loginUser']),
     onSubmit () {
-      const { email, password } = this
+      const { fullName, email, password } = this
       this.$refs.emailAuthenticationForm.validate()
         .then(async success => {
           if (success) {
@@ -118,7 +131,7 @@ export default {
             })
             try {
               if (this.isRegistration) {
-                await this.createNewUser({ email, password })
+                await this.createNewUser({ email, password, fullName })
               } else {
                 await this.loginUser({ email, password })
               }
@@ -134,6 +147,9 @@ export default {
             }
           }
         })
+    },
+    reset() {
+      this.$refs.emailAuthenticationForm.resetValidation()
     }
   }
 }

@@ -1,6 +1,5 @@
 import firebaseServices from '../services/firebase'
 import { Notify } from 'quasar'
-import { store } from '../store'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -17,7 +16,7 @@ Vue.use(VueRouter)
  * with the Router instance.
  */
 
-export default function (/* { store, ssrContext } */) {
+export default function ({store}) {
   const Router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
     routes,
@@ -36,6 +35,22 @@ export default function (/* { store, ssrContext } */) {
       // finished its initialization, and handle the
       // authentication state of the user properly
       await ensureAuthIsInitialized(store)
+      
+      if(!store.state.user.currentUser){
+        await store.dispatch('user/getCurrentUser', store.state.auth.uid)
+      }
+
+      const currentUserRole = store.state.user.currentUser.role
+      if(to.path == '/'){
+        if(currentUserRole == 'Admin'){
+          next('/admin')
+        }
+      }
+      
+      if(to.matched.some(record => record.meta.admin) && currentUserRole != 'Admin'){
+        next('/rewards')
+      }
+      
       if (to.matched.some(record => record.meta.requiresAuth)) {
         if (isAuthenticated(store)) {
           next()

@@ -1,30 +1,38 @@
 const routes = [
   {
-    path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    path: '/admin',
+    component: () => import('layouts/AdminLayout.vue'),
     meta: {
       requiresAuth: true
     },
     children: [
       {
-        path: '',
+        path: '/',
         name: 'Dashboard',
-        component: () => import('pages/Dashboard.vue')
+        component: () => import('pages/Dashboard.vue'),
+        meta: {
+          admin: true
+        }
       },
       {
         path: 'user_management',
         name: 'User Management',
         component: () => import('pages/UserManagement.vue'),
         meta: {
-          requiresAuth: true
+          admin: true
         }
+      },
+      {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('pages/user/Profile.vue')
       },
       {
         path: 'product_management',
         name: 'Product Management',
         component: () => import('pages/product/ProductManagement.vue'),
         meta: {
-          requiresAuth: true
+          admin: true
         }
       },
       {
@@ -32,7 +40,7 @@ const routes = [
         name: 'Products',
         component: () => import('pages/product/Products.vue'),
         meta: {
-          requiresAuth: true
+          admin: true
         }
       },
       {
@@ -40,31 +48,32 @@ const routes = [
         name: 'Settings',
         component: () => import('pages/Settings.vue'),
         meta: {
-          requiresAuth: true
-        }
-      },
-      {
-        path: 'profile',
-        name: 'Profile',
-        component: () => import('pages/user/Profile.vue'),
-        meta: {
-          requiresAuth: true
+          admin: true
         }
       },
       {
         path: 'menu',
         name: 'Menu',
-        component: () => import('pages/order/OrderMenu.vue')
+        component: () => import('pages/order/OrderMenu.vue'),
+        meta: {
+          admin: true
+        }
       },
       {
         path: 'sales_report',
         name: 'Sales Report',
-        component: () => import('pages/order/SalesReport.vue')
+        component: () => import('pages/order/SalesReport.vue'),
+        meta: {
+          admin: true
+        }
       },
       {
         path: 'expenses',
         name: 'Expenses',
-        component: () => import('pages/Expenses.vue')
+        component: () => import('pages/Expenses.vue'),
+        meta: {
+          admin: true
+        }
       },
     ]
   },
@@ -88,7 +97,7 @@ const routes = [
         component: () => import('pages/Auth.vue')
       }
     ]
-  },
+  }
 ]
 
 // Always leave this as last one

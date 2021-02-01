@@ -129,10 +129,8 @@ export default {
           field: "createdDate",
           format: function(val){
             if(val){
-              if(!(val instanceof Date)){
-                val = val.toDate()
-              }
-              return val.toDateString()
+              const phTimeDate = self.$options.filters.toPHTimezone(val)
+              return date.formatDate(phTimeDate, 'ddd MMM DD YYYY hh:mm A')
             }
           },
           sortable: true
@@ -172,7 +170,7 @@ export default {
     }
   },
   mounted(){
-    
+
   },
   computed: {
     ...mapGetters('order', ['allOrders']),
@@ -198,7 +196,7 @@ export default {
     },
     today(){
       return date.formatDate(new Date(), 'YYYY/MM/DD')
-    }
+    },
   },
   methods: {
     ...mapActions('order', ['markOrderDeleted', 'getAllOrders']),
@@ -244,10 +242,7 @@ export default {
         
         let branch_filter = (terms.branch) && terms.branch == row.branchName
 
-        let createdDate = row.createdDate
-        if(!(createdDate instanceof Date)){
-          createdDate = createdDate.toDate()
-        }
+        let createdDate = this.$options.filters.toPHTimezone(row.createdDate)
         let rowDate = date.formatDate(createdDate, 'YYYY/MM/DD')
         let date_filter = (terms.date) && terms.date == rowDate
         

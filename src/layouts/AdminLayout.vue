@@ -142,7 +142,7 @@ export default {
   components: {
     'cart': () => import('../components/Cart.vue'),
   },
-  name: 'MainLayout',
+  name: 'AdminLayout',
   data () {
     return {
       notifications: [],
@@ -154,49 +154,49 @@ export default {
           name: 'Dashboard',
           icon: 'eva-bar-chart',
           label: 'Dashboard',
-          route: '/',
+          route: '/admin',
           separator: false
         },
         {
           name: 'User Management',
           icon: 'eva-people-outline',
           label: 'Users',
-          route: '/user_management',
+          route: '/admin/user_management',
           separator: false
         },
         {
           name: 'Product Management',
           icon: 'eva-pricetags-outline',
           label: 'Products',
-          route: '/product_management',
+          route: '/admin/product_management',
           separator: false
         },
         {
           name: 'Sales Report',
           icon: 'point_of_sale',
           label: 'Sales Report',
-          route: '/sales_report',
+          route: '/admin/sales_report',
           separator: false
         },
         {
           name: 'Expenses',
           icon: 'credit_card',
           label: 'Expenses',
-          route: '/expenses',
+          route: '/admin/expenses',
           separator: false
         },
         {
           name: 'Menu',
           icon: 'eva-shopping-bag-outline',
           label: 'Product Menu',
-          route: {path: '/menu', query: { category: 'Classic' }},
+          route: {path: '/admin/menu', query: { category: 'Classic' }},
           separator: true
         },
         {
           name: 'Settings',
           icon: 'settings',
           label: 'Settings',
-          route: '/settings',
+          route: '/admin/settings',
           separator: false
         },
       ]

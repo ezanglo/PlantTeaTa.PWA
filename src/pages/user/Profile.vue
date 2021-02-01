@@ -30,13 +30,12 @@
               <label class="text-body1 text-left">Mobile Number:</label>
               <p class="text-body1 text-right">{{ getUserData('mobile') }}</p>
             </div>
-            <div class="row justify-between">
-              <label class="text-body1 text-left">Branch:</label>
-              <p class="text-body1 text-right">{{ getUserData('branchName') }}</p>
+            <div>
+              <q-btn label="UPDATE" color="primary" style="width:100%" @click="setEditUserDialog(true); setBlur()"/>
             </div>
         </div>
     </div>
-    <q-btn class="fixed-bottom-right q-ma-md" round="round" color="primary" icon="edit" @click="setEditUserDialog(true); setBlur()"></q-btn>
+    <!-- <q-btn class="fixed-bottom-right q-ma-md" round="round" color="primary" icon="edit" ></q-btn> -->
     <q-dialog v-model="editUserDialog" full-height="full-height" persistent="persistent" @before-hide="setBlur">
         <user-settings></user-settings>
     </q-dialog>

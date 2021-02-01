@@ -12,11 +12,11 @@ export const getAllUsers = function() {
 }
 
 export const updateUser = (data) => {
-    db.updateDocument(collectionName, data)
+    return db.updateDocument(collectionName, data)
 }
 
 export const deleteUser = (id) => {
-    db.deleteDocument(collectionName, id)
+    return db.deleteDocument(collectionName, id)
 }
 
 export const getUserCart = function(userId) {

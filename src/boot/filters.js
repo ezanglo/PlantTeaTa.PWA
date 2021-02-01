@@ -32,4 +32,14 @@ export default ({ Vue, store}) => {
         }
         return product.productType
     });
+
+    Vue.filter('toPHTimezone', function(date){
+        if(!date){
+            return
+        }
+        if(!(date instanceof Date)){
+            date = date.toDate()
+        }
+        return date.toLocaleString("en-US", {timeZone: 'Asia/Manila'})
+    })
 }

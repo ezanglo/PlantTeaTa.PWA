@@ -1,9 +1,20 @@
 export const setEditUserDialog = (state, editUserDialog) => {
-    state.editUserDialog = editUserDialog
-  }
+  state.editUserDialog = editUserDialog
+}
 
 export const setAllUsers = (state, allUsers) => {
   state.allUsers = allUsers
+}
+
+export const updateUser = (state, payload) => {
+  state.allUsers.forEach(user => {
+    if(user.id == payload.id){
+      user.fullName = payload.fullName
+      user.mobile = payload.mobile
+      user.role = payload.role
+      user.branchName = payload.branchName
+    }
+  });
 }
 
 export const addProductToCart = (state, product) => {

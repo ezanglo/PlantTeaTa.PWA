@@ -252,10 +252,8 @@ export default {
             field: "createdDate",
             format: function(val){
               if(val){
-                if(!(val instanceof Date)){
-                  val = val.toDate()
-                }
-                return val.toDateString()
+                const phTimeDate = self.$options.filters.toPHTimezone(val)
+                return date.formatDate(phTimeDate, 'ddd MMM DD YYYY hh:mm A')
               }
             },
             sortable: true
@@ -547,10 +545,7 @@ export default {
       getTodaySales(products){
         const now = date.formatDate(new Date(), 'YYYY/MM/DD')
         return products.filter(product => {
-          let createdDate = product.createdDate
-          if(!(createdDate instanceof Date)){
-            createdDate = createdDate.toDate()
-          }
+          let createdDate = this.$options.filters.toPHTimezone(product.createdDate)
           createdDate = date.formatDate(createdDate, 'YYYY/MM/DD')
           return createdDate == now
         })
