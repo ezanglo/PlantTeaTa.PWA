@@ -80,7 +80,7 @@ export default {
     ...mapMutations('product', ['setProductDialog']),
     async saveProductData () {
       const { id, productName, productType, productCategory } = this
-       this.$q.loading.show({
+      this.$q.loading.show({
         message: this.text + ' product, please stand by...',
         customClass: 'text-h3, text-bold'
       })

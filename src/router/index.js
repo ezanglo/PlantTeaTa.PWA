@@ -36,19 +36,15 @@ export default function ({store}) {
       // authentication state of the user properly
       await ensureAuthIsInitialized(store)
       
-      if(!store.state.user.currentUser){
-        await store.dispatch('user/getCurrentUser', store.state.auth.uid)
-      }
+      // if(isAuthenticated(store)){
+      //   await store.dispatch('user/getCurrentUser', store.state.auth.uid)
+      // }
 
-      const currentUserRole = store.state.user.currentUser.role
-      if(to.path == '/'){
-        if(currentUserRole == 'Admin'){
-          next('/admin')
+      if(store.state.user.currentUser){
+        const currentUserRole = store.state.user.currentUser.role
+        if(to.matched.some(record => record.meta.admin) && currentUserRole != 'Admin'){
+          next('/')
         }
-      }
-      
-      if(to.matched.some(record => record.meta.admin) && currentUserRole != 'Admin'){
-        next('/rewards')
       }
       
       if (to.matched.some(record => record.meta.requiresAuth)) {

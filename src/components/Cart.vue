@@ -1,6 +1,6 @@
 <template>
   <q-card :style="$q.screen.lt.sm?'':'min-width: 450px;'">
-    <q-form @submit="checkOutOrders" class="full-height column">
+    <q-form @submit="showConfirmCheckOutDialog" class="full-height column">
       <q-card-section class="bg-teal text-white col-auto">
         <div class="text-h6">{{title}}</div>
       </q-card-section>
@@ -33,19 +33,12 @@
       </q-card-section>
       <q-separator/>
       <q-card-section v-if="cartItems.length > 0" align="right">
-        <q-item v-if="!readOnly" class="q-pr-none justify-end">
-          <q-select style="width:90px;" class="q-mr-sm" color="black" v-model="cartBranch" :options="branches" dense/>
-          <q-input v-model="cartDateString" style="width:140px" dense readonly>
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date v-model="cartDate" v-close-popup/>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+        <q-item class="row justify-between items-center q-mb-none">
+          <q-item-section style="justify-end">
+            <q-item-label class="text-h6">Points: {{totalOrderPoints}}</q-item-label>
+            <q-item-label class="text-h6">Total: {{totalOrderAmount | toCurrency}}</q-item-label>
+          </q-item-section>
         </q-item>
-        <q-item-label class="text-h6">Total: {{totalCartAmount | toCurrency}}</q-item-label>
       </q-card-section>
       <q-card-actions align="right" class="col-auto">
         <q-btn flat label="LAST ORDER" color="primary" @click="showLastOrder" v-if="!readOnly"/>
@@ -53,6 +46,49 @@
         <q-btn flat label="CHECKOUT" type="submit" color="primary" v-if="cartItems.length > 0 && !readOnly"/>
       </q-card-actions>
     </q-form>
+    <q-dialog v-model="QRCodeScannerDialog">
+      <qrcode-scanner @scan="handleQRCodeScan"/>
+    </q-dialog>
+    <q-dialog v-model="confirmCheckOutDialog" persistent transition-show="scale" transition-hide="scale">
+      <q-card style="width: 300px" class="column">
+        <q-card-section>
+          <div class="text-h6">Checkout your order</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-item>
+            <q-input style="width:100%" v-model="selectedUserFullName" 
+              label="User" 
+              readonly 
+              :hint="'User will get ' + totalOrderPoints + ' points'">
+              <template v-slot:append>
+                <q-icon name="qr_code" class="cursor-pointer" @click="QRCodeScannerDialog = true"/>
+              </template>
+            </q-input>
+          </q-item>
+          <q-item>
+            <q-input style="width:100%" label="Date" v-model="orderDateString" readonly>
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                    <q-date v-model="orderDate" v-close-popup/>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </q-item>
+          <q-item>
+            <q-select style="width:100%" label="Branch" class="q-mr-sm" color="black" v-model="orderBranch" :options="branches"/>
+          </q-item>
+          <q-item>
+            <q-input style="width:100%" label="Description" v-model="orderDescription"/>
+          </q-item>
+        </q-card-section>
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="CANCEL" color="primary" v-close-popup />
+          <q-btn flat label="CHECKOUT" @click="checkOutOrders"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-card>
 </template>
 
@@ -62,6 +98,9 @@ import { date } from 'quasar'
 
 export default {
   name: 'Cart',
+  components: {
+    'qrcode-scanner': () => import('./QRCodeScanner.vue')
+  },
   props: {
     meta: {
       type: Object
@@ -70,21 +109,28 @@ export default {
   data() {
     return {
       currentOrder: this.meta,
-      cartDate: date.formatDate(new Date(), 'YYYY/MM/DD'),
-      cartBranch: '',
-      branches: ['Cavite', 'Bulacan']
+      orderDate: date.formatDate(new Date(), 'YYYY/MM/DD'),
+      orderBranch: '',
+      orderDescription: '',
+      branches: ['Cavite', 'Bulacan'],
+      QRCodeScannerDialog: false,
+      selectedUser: '',
+      confirmCheckOutDialog: false
     }
   },
   mounted: function() {
-    this.cartBranch = this.currentUser.branchName
+    this.orderBranch = this.currentUser.branchName
   },
   computed: {
-    ...mapGetters('user', ['currentUser','currentUserCart']),
-    ...mapGetters('product', ['allProducts']),
-    totalCartAmount: {
+    ...mapGetters('user', ['currentUser','currentUserCart', 'allUsers']),
+    ...mapGetters('product', ['allProducts', 'productCategories']),
+    totalOrderAmount: {
       get(){
-        return this.getTotalCartAmount()
+        return this.getTotalOrderAmount()
       }
+    },
+    totalOrderPoints() {
+      return this.totalOrderAmount / 10
     },
     cartItems: {
       get() {
@@ -108,61 +154,74 @@ export default {
         return (this.currentOrder) ? 'ORDER: ' + this.currentOrder.id.toUpperCase() : 'Your Cart'
       }
     },
-    cartDateString: {
+    orderDateString: {
       get() {
-        return new Date(this.cartDate).toDateString()
+        return new Date(this.orderDate).toDateString()
       },
       set() {
         return
       }
+    },
+    selectedUserFullName() {
+      const self = this
+      const user = this.allUsers.find(function(user){
+        return user.id == self.selectedUser
+      })
+      if(user){
+        return (user.fullName) ? user.fullName : user.email
+      }
+      return ''
     }
   },
   methods: {
     ...mapActions('user', ['updateCartProductQuantity', 'removeCartProduct']),
     ...mapActions('order', ['addOrder', 'getLastOrder']),
-    checkOutOrders(){
+    handleQRCodeScan(value){
+      this.QRCodeScannerDialog = false
+      this.selectedUser = value
+    },
+    showConfirmCheckOutDialog(){
+      this.confirmCheckOutDialog = true
+      this.selectedUser = ''
+    },
+    async checkOutOrders(){
       if(this.readOnly){
         return
       }
-
-      this.$q.dialog({
-        title: 'Checkout your Order',
-        message: 'Enter a description',
-        prompt: {
-          type: 'text' // optional
-        },
-        cancel: true,
-        persistent: true
-      }).onOk(async data => {
-        try {
-          let today = date.formatDate(new Date(), 'YYYY/MM/DD')
-          // console.log(date.formatDate(new Date(), 'ddd MMM DD YYYY hh:mm A'));
-          await this.addOrder({
-            orderList: JSON.stringify(this.cartItems),
-            totalAmount: this.totalCartAmount,
-            orderDescription: (data) ? data : '',
-            branchName: this.cartBranch,
-            createdDate: this.cartDate == today ? new Date(): new Date(this.cartDate)
-          })
-          this.$q.notify({
-            message: 'Order Complete!',
-            type: 'positive',
-            position: 'bottom-left',
-            actions: [
-              { label: 'Dismiss', color: 'white' }
-            ]
-          })
-        } catch (err) {
-          this.$q.notify({
-            message: `Looks like a problem adding the orders: ${err}`,
-            color: 'negative'
-          })
-        } finally {
-          this.$q.loading.hide()
-        }
+      this.$q.loading.show({
+        message: 'Checking out order, please stand by...',
+        customClass: 'text-h3, text-bold'
       })
+      try {
+        let today = date.formatDate(new Date(), 'YYYY/MM/DD')
+        await this.addOrder({
+          orderList: JSON.stringify(this.cartItems),
+          totalAmount: this.totalOrderAmount,
+          orderDescription: this.orderDescription,
+          branchName: this.orderBranch,
+          createdDate: this.orderDate == today ? new Date(): new Date(this.orderDate),
+          userId: this.selectedUser,
+          orderPoints: this.totalOrderPoints
+        })
+        this.confirmCheckOutDialog = false
+        this.$q.notify({
+          message: 'Order Complete!',
+          type: 'positive',
+          position: 'bottom-left',
+          actions: [
+            { label: 'Dismiss', color: 'white' }
+          ]
+        })
+      } catch (err) {
+        this.$q.notify({
+          message: `Looks like a problem adding the orders: ${err}`,
+          color: 'negative'
+        })
+      } finally {
+        this.$q.loading.hide()
+      }
     },
-    getTotalCartAmount(){
+    getTotalOrderAmount(){
       let total = 0;
       this.cartItems.forEach(cartProduct => {
         const price = this.getPriceFromProduct(cartProduct)
@@ -171,6 +230,36 @@ export default {
         }
       })
       return total;
+    },
+    getTotalOrderPoints(){
+      let points = 0;
+      this.cartItems.forEach(cartProduct => {
+        const productSize = this.getProductPoints(cartProduct)
+        if(productSize){
+          points += (parseInt(cartProduct.productQuantity) * parseInt(productSize.point))
+        }
+      })
+      return points;
+    },
+    getProductPoints(cartProduct){
+      const product = this.allProducts.find(function(product){
+        return product.productName == cartProduct.productName
+      })
+      if(product)
+      {
+        const productCategory = this.productCategories.find(category => {
+          return category.categoryName == product.productCategory
+        })
+        if(productCategory && productCategory.productSizes.length > 0){
+          const productSize = productCategory.productSizes.find(price => {
+            return price.productSize == cartProduct.productSize
+          })
+          if(productSize){
+            return productSize
+          }
+        }
+      }
+      return null
     },
     getPriceFromProduct(cartProduct){
       const product = this.allProducts.find(function(product){

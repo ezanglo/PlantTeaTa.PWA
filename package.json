@@ -20,6 +20,7 @@
     "vue-apexcharts": "^1.5.2",
     "vue-echarts-v3": "^2.0.1",
     "vue-i18n": "^8.0.0",
+    "vue-qrcode-reader": "^2.3.16",
     "vuedraggable": "^2.23.2",
     "vuexfire": "^3.2.5"
   },

@@ -8,19 +8,27 @@ export const getProduct = (id) => {
 }
 
 export const getAllProducts = () => {
-    return db.getCollection(collectionName)
+    return db.getCollection({
+        collectionName: collectionName
+    })
 }
 
 export const getAllProductPrices = () => {
-    return db.getCollection('product_price')
+    return db.getCollection({
+        collectionName: 'product_price'
+    })
 }
 
 export const getProductSizes = () => {
-    return db.getCollection('product_sizes')
+    return db.getCollection({
+        collectionName: 'product_sizes'
+    })
 }
 
 export const getProductTypes = () => {
-    return db.getCollection('product_types')
+    return db.getCollection({
+        collectionName: 'product_types'
+    })
 }
 
 export const updateProduct = (data) => {
@@ -44,7 +52,13 @@ export const deleteProductPrice = (id) => {
 }
 
 export const getProductCategories = () => {
-    return db.getCollection('product_categories')
+    return db.getCollection({
+        collectionName: 'product_categories',
+        orderBy: {
+            field: 'order',
+            direction: 'asc'
+        }
+    })
 }
 
 export const insertProductCategory = (data) => {

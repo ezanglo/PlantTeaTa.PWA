@@ -1,6 +1,10 @@
+import { rewardTransactions } from "./getters";
+
 export default {
   allUsers: [],
   currentUser: null,
   editUserDialog: false,
-  currentUserCart: []
+  currentUserCart: [],
+  rewardTransactions: [],
+  currentUserRewardTransactions: []
 }

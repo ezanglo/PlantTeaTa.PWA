@@ -8,7 +8,9 @@ export const getUser = (id) => {
 }
 
 export const getAllUsers = function() {
-    return db.getCollection(collectionName)
+    return db.getCollection({
+        collectionName: collectionName
+    })
 }
 
 export const updateUser = (data) => {
@@ -20,7 +22,9 @@ export const deleteUser = (id) => {
 }
 
 export const getUserCart = function(userId) {
-    return db.getCollection('users/' + userId + '/cart')
+    return db.getCollection({
+        collectionName: 'users/' + userId + '/cart'
+    })
 }
 
 export const addProductToCart = function(userId, data) {
@@ -37,4 +41,28 @@ export const removeCartProduct = function(userId, id) {
 
 export const clearUserCart = function(userId) {
     return db.clearCollection('users/' + userId + '/cart')
+}
+
+export const insertRewardTransaction = (data) => {
+    return db.addDocument('reward_transactions', data)
+}
+
+export const getRewardTransactions = (id) => {
+    let params = { collectionName: 'reward_transactions' }
+    if(id){
+        params.where = {
+            field: 'userId',
+            condition: '==',
+            value: id
+        }
+    }
+    return db.getCollection(params)
+}
+
+export const updateRewardTransaction = (data) => {
+    return db.updateDocument('reward_transactions', data)
+}
+
+export const deleteRewardTransaction = (id) => {
+    return db.deleteDocument('reward_transactions', id)
 }

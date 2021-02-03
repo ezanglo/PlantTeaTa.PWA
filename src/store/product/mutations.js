@@ -73,9 +73,6 @@ export const setProductPrices = (state, productPrices) => {
 }
 
 export const setProductCategories = (state, productCategories) => {
-  productCategories.sort(function(a, b){
-    return a.order - b.order
-  })
   state.productCategories = productCategories
 }
 

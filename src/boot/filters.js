@@ -1,4 +1,4 @@
-export default ({ Vue, store}) => {
+export default ({ Vue, store}) => { 
     Vue.filter('toCurrency', function (value) {
         if(isNaN(value)){
             return value;
@@ -32,7 +32,7 @@ export default ({ Vue, store}) => {
         }
         return product.productType
     });
-
+    
     Vue.filter('toPHTimezone', function(date){
         if(!date){
             return

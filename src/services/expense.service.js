@@ -8,7 +8,9 @@ export const getExpense = (id) => {
 }
 
 export const getAllExpenses = () => {
-    return db.getCollection(collectionName)
+    return db.getCollection({
+        collectionName: collectionName
+    })
 }
 
 export const updateExpense = (data) => {

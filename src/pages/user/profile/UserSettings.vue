@@ -1,23 +1,24 @@
 <template>
   <div class="user-settings full-width" v-if="currentUser">
     <q-form class="full-height" @submit="saveUserData">
-        <div class="background-photo">
+        <div>
             <div class="default-background" v-if="showBackgroundPhoto()">
-                <q-img src="https://cdn.quasar.dev/img/material.png" style="height: 200px;" @click="showPhotoUpload('background')"></q-img>
+                <q-img src="https://cdn.quasar.dev/img/material.png" style="height: 200px;"></q-img>
             </div>
             <div class="user-background" v-else>
-                <q-img :src="currentUser.backgroundPhoto" style="height: 200px;" @click="showPhotoUpload('background')"></q-img>
+                <q-img :src="currentUser.backgroundPhoto" style="height: 200px;"></q-img>
             </div>
         </div>
-        <div class="absolute-top q-mt-sm text-white text-center">
-            <q-icon class="q-mr-sm" color="white" name="edit" size="20px" @click="showPhotoUpload('profile')"></q-icon>Edit your background image</div>
         <div class="profile-photo text-center" @click="showPhotoUpload('profile')">
             <div class="default-user-image column items-center" v-if="showDefaultPhoto()">
-                <q-avatar class="q-mb-sm" round="round" color="blue-grey-10" icon="person" font-size="110px" size="180px" text-color="white"></q-avatar><span class="text-caption text-blue-grey-10">Click to edit</span></div>
+              <q-avatar class="q-mb-sm" round="round" color="blue-grey-10" icon="person" font-size="110px" size="180px" text-color="white"></q-avatar>
+              <span class="text-caption text-blue-grey-10">Click to edit</span>
+            </div>
             <div class="user-image column items-center" v-else>
-            <q-avatar class="q-mb-sm shadow-5" size="180px" @click="showPhotoUpload('profile')">
-                <q-img :src="currentUser.profilePhoto"></q-img>
-            </q-avatar><span class="text-blue-grey-10"><q-icon class="q-mr-sm" color="blue-grey-10" name="edit" size="16px"></q-icon>Click to edit</span></div>
+              <q-avatar class="q-mb-sm shadow-5" size="180px" @click="showPhotoUpload('profile')">
+                  <q-img :src="currentUser.profilePhoto"></q-img>
+              </q-avatar><span class="text-blue-grey-10"><q-icon class="q-mr-sm" color="blue-grey-10" name="edit" size="16px"></q-icon>Click to edit</span>
+            </div>
         </div>
         <section class="user-info">
             <h6 class="q-mt-none q-mb-md text-center">Edit Your Profile</h6>

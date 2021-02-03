@@ -46,10 +46,16 @@ export const getDocument = (collectionName, id) => {
   return firestore().collection(collectionName).doc(id)
 }
 
-export const getCollection = (collectionName, where) => {
+export const getCollection = (params) => {
+  const collectionName = params.collectionName
+  const orderBy = params.orderBy
+  const where = params.where
   let collectionRef = firestore().collection(collectionName);
   if(where){
-    collectionRef = firestore().collection(collectionName).where(where.field, where.condition, where.value);
+    collectionRef = collectionRef.where(where.field, where.condition, where.value);
+  }
+  if(orderBy){
+    collectionRef = collectionRef.orderBy(orderBy.field, orderBy.direction)
   }
   return collectionRef.get()
     .then(function(collection) {

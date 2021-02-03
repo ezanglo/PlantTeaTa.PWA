@@ -1,5 +1,6 @@
 import { firestoreAction } from 'vuexfire'
 import * as userService from '../../services/user.service.js'
+import { store } from '../index.js'
 
 /** Get current user from the firestore collection user's
  * via firebase uid
@@ -25,6 +26,32 @@ export const getAllUsers = async function (context) {
 export const updateUserData = async function (context, payload) {
   await userService.updateUser(payload)
   context.commit('updateUser', payload);
+}
+
+export const updateUserPoints = async function(context, payload) {
+  let user = await userService.getUser(payload.userId).get()
+  user = user.data();
+  if(user){
+    const userPoints = (user.points) ? user.points: 0
+
+    if(payload.transactionType == 'Debit'){
+      payload.runningBalance = userPoints + payload.points
+    }
+    else {
+      if(payload.points > userPoints){
+        throw 'User does not have enough points'
+      }
+      payload.runningBalance = userPoints - payload.points
+    }
+    await addRewardTransaction(context, payload)
+
+    await userService.updateUser({
+      id: payload.userId,
+      points: payload.runningBalance
+    })
+
+    context.commit('updateUser', payload);
+  }
 }
 
 // export const getUserDetails = function (context, userId) {
@@ -83,4 +110,41 @@ export const clearCurrentUserCart = async function(context) {
   const currentUserId = context.state.currentUser.id;
   await userService.clearUserCart(currentUserId)
   context.commit('setCurrentUserCart', []);
+}
+
+export const getRewardTransactions = async function (context) {
+  const rewardTransactions = await userService.getRewardTransactions()
+  context.commit('setRewardTransactions', rewardTransactions);
+}
+
+export const getCurrentUserRewardTransactions = async function (context) {
+  const currentUserId = store.state.auth.uid
+  let currentUserRewardTransactions = await userService.getRewardTransactions(currentUserId)
+  currentUserRewardTransactions = currentUserRewardTransactions.sort((a,b) => {
+    let a_date = a.createdDate
+    let b_date = b.createdDate
+    if(!(a.createdDate instanceof Date)){
+      a_date = a.createdDate.toDate()
+    }
+    if(!(b.createdDate instanceof Date)){
+      b_date = b.createdDate.toDate()
+    }
+    return b_date - a_date
+  })
+  context.commit('setCurrentUserRewardTransactions', currentUserRewardTransactions);
+}
+
+export const addRewardTransaction = async function ({ commit }, payload) {
+  const doc = await userService.insertRewardTransaction(payload);
+  commit('addRewardTransaction', { ...payload, id: doc.id });
+}
+
+export const updateRewardTransaction = async function ({ state, commit }, payload) {
+  await userService.updateRewardTransaction(payload)
+  commit('updateRewardTransaction', payload);
+}
+
+export const deleteRewardTransaction = async function ({ commit }, id) {
+  await userService.deleteRewardTransaction(id)
+  commit('deleteRewardTransaction', id);
 }

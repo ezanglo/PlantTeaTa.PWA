@@ -15,6 +15,7 @@ export default class User {
     fullName = ''
     mobile = ''
     profilePhoto = ''
+    points = 0
   
     /**
      * @param  {Object} args - User arguments supplied during

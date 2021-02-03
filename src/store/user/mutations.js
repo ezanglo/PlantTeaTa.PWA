@@ -41,3 +41,50 @@ export const removeCartProduct = (state, id) => {
     }
   })
 }
+
+export const setRewardTransactions = (state, rewardTransactions) => {
+  state.rewardTransactions = rewardTransactions
+}
+
+export const setCurrentUserRewardTransactions = (state, currentUserRewardTransactions) => {
+  state.currentUserRewardTransactions = currentUserRewardTransactions
+}
+
+export const addRewardTransaction = (state, rewardTransaction) => {
+  state.rewardTransactions.push(rewardTransaction)
+  state.currentUserRewardTransactions.push(rewardTransaction)
+}
+
+export const updateRewardTransaction = (state, payload) => {
+  state.rewardTransactions.forEach(transaction => {
+    if(transaction.id == payload.id){
+      transaction.description = payload.description
+    }
+  });
+
+  state.currentUserRewardTransactions.forEach(transaction => {
+    if(transaction.id == payload.id){
+      transaction.description = payload.description
+    }
+  });
+}
+
+export const deleteRewardTransaction = (state, id) => {
+  if(state.rewardTransaction.length > 0){
+    state.rewardTransactions.forEach(function(transaction, index) {
+      if(transaction.id == id){
+        state.rewardTransactions.splice(index, 1)
+        return;
+      }
+    })
+  }
+
+  if(state.currentUserRewardTransactions.length > 0){
+    state.currentUserRewardTransactions.forEach(function(transaction, index) {
+      if(transaction.id == id){
+        state.currentUserRewardTransactions.splice(index, 1)
+        return;
+      }
+    })
+  }
+}

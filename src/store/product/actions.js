@@ -1,4 +1,5 @@
 import * as productService from '../../services/product.service.js'
+import { productCategories } from './getters.js';
 
 /** Get all users from the firestore collection user
  */

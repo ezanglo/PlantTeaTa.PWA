@@ -3,24 +3,19 @@ const routes = [
     path: '/admin',
     component: () => import('layouts/AdminLayout.vue'),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      admin: true
     },
     children: [
       {
         path: '/',
         name: 'Dashboard',
         component: () => import('pages/Dashboard.vue'),
-        meta: {
-          admin: true
-        }
       },
       {
         path: 'user_management',
         name: 'User Management',
         component: () => import('pages/UserManagement.vue'),
-        meta: {
-          admin: true
-        }
       },
       {
         path: '/profile',
@@ -31,49 +26,31 @@ const routes = [
         path: 'product_management',
         name: 'Product Management',
         component: () => import('pages/product/ProductManagement.vue'),
-        meta: {
-          admin: true
-        }
       },
       {
         path: 'products',
         name: 'Products',
         component: () => import('pages/product/Products.vue'),
-        meta: {
-          admin: true
-        }
       },
       {
         path: 'settings',
         name: 'Settings',
         component: () => import('pages/Settings.vue'),
-        meta: {
-          admin: true
-        }
       },
       {
         path: 'menu',
         name: 'Menu',
         component: () => import('pages/order/OrderMenu.vue'),
-        meta: {
-          admin: true
-        }
       },
       {
         path: 'sales_report',
         name: 'Sales Report',
         component: () => import('pages/order/SalesReport.vue'),
-        meta: {
-          admin: true
-        }
       },
       {
         path: 'expenses',
         name: 'Expenses',
         component: () => import('pages/Expenses.vue'),
-        meta: {
-          admin: true
-        }
       },
     ]
   },
@@ -96,6 +73,25 @@ const routes = [
         name: 'Register',
         component: () => import('pages/Auth.vue')
       }
+    ]
+  },
+  {
+    path: '/',
+    component: () => import('layouts/CustomerLayout.vue'),
+    meta: {
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: '',
+        name: 'home',
+        component: () => import('pages/Rewards.vue'),
+      },
+      {
+        path: '/customer/profile',
+        name: 'Profile',
+        component: () => import('pages/user/Profile.vue')
+      },
     ]
   }
 ]

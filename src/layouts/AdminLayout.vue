@@ -85,7 +85,7 @@
             :icon="(category.categoryIcon)?category.categoryIcon:'extension'"
             v-for="category in productCategories" 
             :key="category.id" 
-            :to="{path: '/menu', query: { category: category.categoryName }}" 
+            :to="{path: '/admin/menu', query: { category: category.categoryName }}" 
             :label="category.categoryName" 
             exact replace
         />
@@ -139,10 +139,10 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
+  name: 'AdminLayout',
   components: {
     'cart': () => import('../components/Cart.vue'),
   },
-  name: 'AdminLayout',
   data () {
     return {
       notifications: [],
@@ -203,7 +203,7 @@ export default {
     }
   },
   mounted: function(){
-    this.getProductCategories()
+    
   },
   computed: {
     ...mapGetters('user', ['currentUser', 'currentUserCart']),
