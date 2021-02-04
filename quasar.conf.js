@@ -46,7 +46,7 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
 
       // transpile: false,
 
@@ -118,9 +118,9 @@ cfg.module.rules.push({
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: `Plant Tea-ta App`,
-        short_name: `Plant Tea-ta App`,
-        description: `A Plant Tea-ta App`,
+        name: `Plant Tea-ta`,
+        short_name: `Plant Tea-ta`,
+        description: `A Plant Tea-ta`,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',

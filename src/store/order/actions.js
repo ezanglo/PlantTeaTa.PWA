@@ -8,7 +8,6 @@ export const getAllOrders = async function (context) {
 
 export const getAllOrdersForCurrentUser = async function (context) {
   const currentUserId = store.state.auth.uid
-  console.log(currentUserId);
   return orderService.getAllOrdersForUser(currentUserId)
 }
 

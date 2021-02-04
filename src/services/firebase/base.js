@@ -59,7 +59,8 @@ export const handleOnAuthStateChanged = async (store, currentUser) => {
   store.commit('auth/setAuthState', {
     isAuthenticated: currentUser !== null,
     isReady: true,
-    uid: (currentUser ? currentUser.uid : '')
+    uid: (currentUser ? currentUser.uid : ''),
+    isEmailVerified: (currentUser ? currentUser.emailVerified : false)
   })
 
   // Get & bind the current user
@@ -71,6 +72,15 @@ export const handleOnAuthStateChanged = async (store, currentUser) => {
       spinner: isOnline ? QSpinnerGears : QSpinnerRadio,
       customClass: 'loader'
     })
+
+    await store.dispatch('auth/createNewUser', {
+      id: currentUser.uid,
+      email: currentUser.email,
+      fullName: currentUser.displayName,
+      profilePhoto: currentUser.photoURL,
+      mobile: currentUser.phoneNumber,
+    })
+
     await store.dispatch('user/getCurrentUser', currentUser.uid)
     const currentUserRole = store.state.user.currentUser.role
     if(currentUserRole == 'Admin'){

@@ -11,6 +11,10 @@ export const getCurrentUser = firestoreAction(({ bindFirestoreRef }, id) => {
   return bindFirestoreRef('currentUser', userService.getUser(id))
 })
 
+export const clearCurrentUser = (context) => {
+  context.commit('clearCurrentUser')
+}
+
 /** Get all users from the firestore collection user
  */
 export const getAllUsers = async function (context) {

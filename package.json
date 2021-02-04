@@ -2,7 +2,7 @@
   "name": "plantteata.pwa",
   "version": "0.0.1",
   "description": "A Plant Tea-ta App",
-  "productName": "Plant Tea-ta App",
+  "productName": "Plant Tea-ta",
   "author": "Ezra Anglo <dev.ezraanglo@gmail.com>",
   "private": true,
   "scripts": {

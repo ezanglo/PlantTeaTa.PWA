@@ -35,8 +35,8 @@
       <q-card-section v-if="cartItems.length > 0" align="right">
         <q-item class="row justify-between items-center q-mb-none">
           <q-item-section style="justify-end">
-            <q-item-label class="text-h6">Points: {{totalOrderPoints}}</q-item-label>
-            <q-item-label class="text-h6">Total: {{totalOrderAmount | toCurrency}}</q-item-label>
+            <!-- <q-item-label class="text-h6">Points: {{totalOrderPoints}}</q-item-label> -->
+            <q-item-label class="text-h6">Sub Total: {{totalOrderAmount | toCurrency}}</q-item-label>
           </q-item-section>
         </q-item>
       </q-card-section>
@@ -56,7 +56,7 @@
         </q-card-section>
         <q-card-section class="q-pt-none">
           <q-item>
-            <q-input style="width:100%" v-model="selectedUserFullName" 
+            <q-input filled style="width:100%" v-model="selectedUserFullName" 
               label="User" 
               readonly 
               :hint="'User will get ' + totalOrderPoints + ' points'">
@@ -66,7 +66,7 @@
             </q-input>
           </q-item>
           <q-item>
-            <q-input style="width:100%" label="Date" v-model="orderDateString" readonly>
+            <q-input filled style="width:100%" label="Date" v-model="orderDateString" readonly>
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -77,10 +77,16 @@
             </q-input>
           </q-item>
           <q-item>
-            <q-select style="width:100%" label="Branch" class="q-mr-sm" color="black" v-model="orderBranch" :options="branches"/>
+            <q-select filled style="width:100%" label="Branch" class="q-mr-sm" color="black" v-model="orderBranch" :options="branches"/>
           </q-item>
           <q-item>
-            <q-input style="width:100%" label="Description" v-model="orderDescription"/>
+            <q-input filled style="width:100%" label="Description" v-model="orderDescription"/>
+          </q-item>
+          <q-item class="row justify-between items-center q-mb-none">
+            <q-item-section style="justify-end">
+              <q-item-label class="text-h6">Points: {{totalOrderPoints}}</q-item-label>
+              <q-item-label class="text-h6">Total: {{totalOrderAmount | toCurrency}}</q-item-label>
+            </q-item-section>
           </q-item>
         </q-card-section>
         <q-card-actions align="right" class="bg-white text-teal">
@@ -130,7 +136,7 @@ export default {
       }
     },
     totalOrderPoints() {
-      return this.totalOrderAmount / 10
+      return this.getTotalOrderPoints()
     },
     cartItems: {
       get() {
@@ -232,14 +238,16 @@ export default {
       return total;
     },
     getTotalOrderPoints(){
-      let points = 0;
+      let total = 0;
       this.cartItems.forEach(cartProduct => {
-        const productSize = this.getProductPoints(cartProduct)
-        if(productSize){
-          points += (parseInt(cartProduct.productQuantity) * parseInt(productSize.point))
+        if(cartProduct.productSize == '22oz' || cartProduct.productSize == '16oz'){
+          const price = this.getPriceFromProduct(cartProduct)
+          if(price){
+            total += (parseInt(cartProduct.productQuantity) * parseInt(price.productPrice))
+          }
         }
       })
-      return points;
+      return total / 10;
     },
     getProductPoints(cartProduct){
       const product = this.allProducts.find(function(product){

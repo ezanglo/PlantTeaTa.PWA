@@ -3,10 +3,20 @@
   <q-page padding v-bind:style="$q.screen.lt.sm?{'padding-left': '25px', 'padding-right': '25px'}:{'padding':'none'}">
     
     <div class="text-center">
-      <img  style="max-width:250px" :src="require('src/assets/PlantTeaTaLogo.png')"/>
+      <img  style="max-width:200px" :src="require('src/assets/PlantTeaTaLogo.png')"/>
     </div>
-    <h5 class="text-center">{{ getAuthType }} to Plant Tea-ta!</h5>
     <q-form class="authentication q-gutter-y-md" ref="emailAuthenticationForm" @submit="onSubmit">
+      <q-item class="q-pa-sm q-ma-none">
+        <q-item-section>
+            <div class="text-left text-bold text-h4">{{ getAuthType }}</div>
+        </q-item-section>
+        <q-item-section side>
+              <router-link :to="routeAuthentication">
+                <span @click="reset" v-if="isRegistration">Login</span>
+                <span @click="reset" v-else>Register</span>
+              </router-link>
+        </q-item-section>
+      </q-item>
       <q-input
         v-if="isRegistration"
         v-model="fullName"
@@ -67,24 +77,20 @@
           <q-icon class="cursor-pointer" :name="isPwd ? 'visibility_off' : 'visibility'" @click="isPwd = !isPwd" />
         </template>
       </q-input>
-      <q-btn
-        class="full-width q-mt-md"
-        color="primary"
-        data-cy="submit"
-        type="submit"
-        :label="getAuthType"
-      >
-      </q-btn>
-
-      <p class="q-mt-md q-mb-none text-center">
-          <router-link class="text-blue" :to="routeAuthentication">
-            <span @click="reset" v-if="isRegistration">Need to login?</span>
-            <span @click="reset" v-else>Need to create an account?</span>
-          </router-link>
-      </p>
-      <p class="q-ma-sm text-center">
+      <p class="q-ma-none text-right">
           <router-link class="text-blue" to="forgotPassword">Forgot Password?</router-link>
       </p>
+      <q-btn
+        class="full-width q-mt-md q-pa-sm"
+        color="secondary"
+        data-cy="submit"
+        type="submit"
+        :label="getAuthType" />
+      
+      <div class="text-center">OR</div>
+      <q-btn @click="facebookSignin" class="full-width q-mt-md q-pa-sm" color="blue-10" icon="fab fa-facebook-f" label="Login with Facebook" />
+      <!-- <q-btn class="full-width q-mt-md" color="red-8" icon="fab fa-google" label="Login with Google" /> -->
+      <!-- <q-btn class="full-width q-mt-md" color="purple-6" icon="fas fa-mobile-alt" label="Login with Phone" /> -->
     </q-form>
   </q-page>
 </template>
@@ -92,6 +98,8 @@
 <script>
 import { mapActions } from 'vuex'
 import { QSpinnerGears } from 'quasar'
+import firebase from 'firebase/app';
+
 export default {
   name: 'Auth',
   computed: {
@@ -115,7 +123,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('auth', ['createNewUser', 'loginUser']),
+    ...mapActions('auth', ['createNewUserWithEmail', 'loginUser', 'createNewUser']),
     onSubmit () {
       const { fullName, email, password } = this
       this.$refs.emailAuthenticationForm.validate()
@@ -131,7 +139,7 @@ export default {
             })
             try {
               if (this.isRegistration) {
-                await this.createNewUser({ email, password, fullName })
+                await this.createNewUserWithEmail({ email, password, fullName })
               } else {
                 await this.loginUser({ email, password })
               }
@@ -150,7 +158,78 @@ export default {
     },
     reset() {
       this.$refs.emailAuthenticationForm.resetValidation()
+    },
+    facebookSignin(){
+      var provider = new firebase.auth.FacebookAuthProvider()
+      provider.addScope('public_profile')
+      firebase.auth().useDeviceLanguage();
+      provider.setCustomParameters({
+        'display': 'popup'
+      });
+      firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then((result) => {
+        /** @type {firebase.auth.OAuthCredential} */
+        var credential = result.credential;
+
+        // The signed-in user info.
+        var user = result.user;
+        if(user){
+          this.$router.push('/')
+        }
+
+        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+        var accessToken = credential.accessToken;
+
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+
+        // ...
+      });
     }
+  },
+  mounted() {
+    // const self = this
+    // var provider = new firebase.auth.FacebookAuthProvider()
+    // provider.addScope('user_birthday')
+    // firebase.auth().useDeviceLanguage();
+    // provider.setCustomParameters({
+    //   'display': 'popup'
+    // });
+    // console.log(provider);
+    // var uiConfig = {
+    //   signInSuccessUrl: '/',
+    //   signInOptions: [
+    //         {
+    //             provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+    //             recaptchaParameters: {
+    //                 size: 'invisible',
+    //                 badge: 'bottomleft' //' bottomright' or 'inline' applies to invisible.
+    //             },
+    //             defaultCountry: 'PH',
+    //             loginHint: '+63'
+    //         },
+    //         //firebase.auth.TwitterAuthProvider.PROVIDER_ID, // Twitter does not support scopes.
+    //         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+    //         firebase.auth.EmailAuthProvider.PROVIDER_ID, // Other providers don't need to be given as object.
+    //         firebase.auth.GoogleAuthProvider.PROVIDER_ID
+    //     ],
+    //     'credentialHelper': firebaseui.auth.CredentialHelper.NONE
+    //   };
+    //   let ui = firebaseui.auth.AuthUI.getInstance();
+    //   if (!ui) {
+    //     ui = new firebaseui.auth.AuthUI(firebase.auth());
+    //   }
+    //   ui.start('#firebaseui-auth-container', uiConfig);
   }
 }
 </script>

@@ -1,7 +1,18 @@
 <template>
+<q-pull-to-refresh @refresh="refresh" color="primary">
   <q-page class="q-pa-sm">
     <div class="row q-col-gutter-sm  q-py-sm">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <q-card dark bordered class="bg-red" v-if="!isEmailVerified">
+            <q-item>
+                <q-item-section>
+                    <q-item-label>Your email hasn't been verified yet</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                    <q-btn color="white" flat label="VERIFY NOW" @click="verifyEmail"/>
+                </q-item-section>
+            </q-item>
+        </q-card>
         <q-item class="q-ma-lg">
             <q-item-section class="items-center">
                 <q-item-label class="text-h1 text-bold">{{currentUserPoints}}</q-item-label>
@@ -29,7 +40,7 @@
                     <q-card class="q-mb-sm my-card">
                         <q-item>
                             <q-item-section>
-                                <q-item-label class="text-bold" lines="1">Earn 1 point per 10php spend</q-item-label>
+                                <q-item-label class="text-bold" lines="1">Earn 1 point per 10php Milk Tea spend</q-item-label>
                                 <q-item-label caption lines="2">
                                 <span class="text-weight-bold">No Expiration</span>
                                 </q-item-label>
@@ -91,6 +102,7 @@
       </div>
     </div>
   </q-page>
+</q-pull-to-refresh>
 </template>
 
 <script>
@@ -108,7 +120,6 @@ export default {
     },
     computed: {
         ...mapGetters('user', ['currentUser', 'currentUserRewardTransactions']),
-        ...mapGetters('product', ['productCategories']),
         currentUserPoints() {
             return (this.currentUser && this.currentUser.points) ? this.currentUser.points: 0
         },
@@ -123,13 +134,35 @@ export default {
         },
         milkTeaCategories() {
             return this.productCategories.filter(c => ['Classic', 'Premium', 'Supreme'].some(n => n == c.categoryName))
+        },
+        isEmailVerified() {
+            return this.$store.state.auth.isEmailVerified
         }
     },
     methods: {
         ...mapActions('user', ['getCurrentUserRewardTransactions']),
+        async refresh(done) {
+            await this.getCurrentUserRewardTransactions()
+            done()
+        },
         formatDate(value){
             const phTimeDate = this.$options.filters.toPHTimezone(value)
             return date.formatDate(phTimeDate, 'ddd MMM DD YYYY hh:mm A')
+        },
+        verifyEmail(){
+            this.$fb.auth().onAuthStateChanged(function(user) {
+                if ((user) && !user.emailVerified) {
+                    var actionCodeSettings = {
+                        url: '',
+                        handleCodeInApp: true,
+                    };
+                    user.sendEmailVerification().then(function() {
+                    // Email sent.
+                    }).catch(function(error) {
+                    // An error happened.
+                    });
+                }
+            });
         }
     }
 }

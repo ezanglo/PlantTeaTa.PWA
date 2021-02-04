@@ -16,6 +16,7 @@ export default class User {
     mobile = ''
     profilePhoto = ''
     points = 0
+    role = 'Customer'
   
     /**
      * @param  {Object} args - User arguments supplied during

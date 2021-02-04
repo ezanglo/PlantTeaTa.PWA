@@ -32,6 +32,19 @@
                 </template>
                 <q-separator />
                 <q-item 
+                    to="/admin"
+                    v-ripple
+                    clickable 
+                    v-if="(currentUser && currentUser.role && currentUser.role == 'Admin')?true:false"
+                    active-class="q-item-no-link-highlighting">
+                        <q-item-section avatar>
+                            <q-icon name="dashboard" />
+                        </q-item-section>
+                        <q-item-section>
+                            Admin Panel
+                        </q-item-section>
+                </q-item>
+                <q-item 
                     @click="logoutUser()"
                     v-ripple
                     clickable 

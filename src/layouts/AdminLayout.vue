@@ -118,6 +118,18 @@
           </q-item>
           <q-separator :key="'sep' + index"  v-if="menuItem.separator" />
         </template>
+        <q-item 
+          @click="logoutUser()"
+          v-ripple
+          clickable 
+          active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="logout" />
+            </q-item-section>
+            <q-item-section>
+                Logout
+            </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
     <q-dialog 

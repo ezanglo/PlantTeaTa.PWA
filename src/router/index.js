@@ -36,9 +36,11 @@ export default function ({store}) {
       // authentication state of the user properly
       await ensureAuthIsInitialized(store)
       
-      // if(isAuthenticated(store)){
-      //   await store.dispatch('user/getCurrentUser', store.state.auth.uid)
-      // }
+      if(isAuthenticated(store)){
+        // while(!store.state.user.currentUser){
+        //   console.log('test');
+        // }
+      }
 
       if(store.state.user.currentUser){
         const currentUserRole = store.state.user.currentUser.role
@@ -53,9 +55,8 @@ export default function ({store}) {
         } else {
           next('/auth/login')
         }
-      } else if ((to.path === '/auth/register' && isAuthenticated(store)) ||
-        (to.path === '/auth/login' && isAuthenticated(store))) {
-        next('/user')
+      } else if (isAuthenticated(store) && (to.path === '/auth/register' || to.path === '/auth/login' )) {
+        next('/admin')
       } else {
         next()
       }
