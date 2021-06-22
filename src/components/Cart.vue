@@ -4,17 +4,17 @@
       <q-card-section class="bg-teal text-white col-auto">
         <div class="text-h6">{{title}}</div>
       </q-card-section>
-      
+
       <div v-if="cartItems.length <= 0" class="absolute-center" style="opacity:.5">
         <div class="text-h5 text-primary text-center">
-          Your Cart is Empty  
+          Your Cart is Empty
         </div>
       </div>
       <q-card-section class="col overflow-auto">
         <q-item v-for="product in cartItems" :key="product.id" class="row justify-between items-center q-mb-none">
           <q-item-section class="col-4">
             <q-item-label :title="product.productName">{{product.productName | truncate(25, '...')}}</q-item-label>
-            <q-item-label caption>{{product.productSize}}</q-item-label>
+            <q-item-label caption>{{product.productSize}} - {{product.productCategory}}</q-item-label>
           </q-item-section>
           <q-item-section class="col-3 content-center">
             <div class="row items-center" style="width:auto">
@@ -56,9 +56,9 @@
         </q-card-section>
         <q-card-section class="q-pt-none">
           <q-item>
-            <q-input filled style="width:100%" v-model="selectedUserFullName" 
-              label="User" 
-              readonly 
+            <q-input filled style="width:100%" v-model="selectedUserFullName"
+              label="User"
+              readonly
               :hint="'User will get ' + totalOrderPoints + ' points'">
               <template v-slot:append>
                 <q-icon name="qr_code" class="cursor-pointer" @click="QRCodeScannerDialog = true"/>
@@ -144,6 +144,9 @@ export default {
         if(this.currentOrder){
           items = JSON.parse(this.currentOrder.orderList)
         }
+        items.sort(function(a, b){
+          return a.categoryOrder - b.categoryOrder
+        })
         return items
       },
       set(val) {
@@ -321,7 +324,7 @@ export default {
       }).onOk(async () => {
         try {
           await this.removeCartProduct(product.id)
-          
+
           const price = this.getPriceFromProduct(product)
           this.$q.notify({
             message: product.productName + '(' + price.productSize + ') has been removed from your cart',
@@ -345,7 +348,7 @@ export default {
 
         }
       }).onCancel(() => {
-        
+
       })
     },
     async showLastOrder(){

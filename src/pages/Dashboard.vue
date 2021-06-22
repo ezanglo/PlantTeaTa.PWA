@@ -114,8 +114,8 @@
                   <q-avatar color="orange-8" text-color="white" icon="bluetooth"/>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label class="text-h6 text-orange-8 text-bold">0</q-item-label>
-                  <q-item-label caption>Vouchers</q-item-label>
+                  <q-item-label class="text-h6 text-orange-8 text-bold">{{frappeSales.length}}</q-item-label>
+                  <q-item-label caption>Frappe</q-item-label>
                 </q-item-section>
               </q-item>
             </div>
@@ -174,7 +174,7 @@
       </q-table>
       </q-card-section>
     </q-card>
-    <q-dialog 
+    <q-dialog
       v-model="orderPreview"
       :maximized="$q.screen.lt.sm?true:false">
         <cart :meta="currentOrder" />
@@ -324,6 +324,12 @@ export default {
                   color: '#546bfa'
               },
               {
+                  name: 'Frappe',
+                  type: 'bar',
+                  data: this.getMonthlySales(this.frappeSales),
+                  color: '#f57c00'
+              },
+              {
                   name: 'Snacks',
                   type: 'bar',
                   data: this.getMonthlySales(this.snackSales),
@@ -345,8 +351,8 @@ export default {
               trigger: 'item',
               formatter: function(params){
                 return params.seriesName + '<br/>'+
-                  params.data.name + ': ' + 
-                  self.$options.filters.toCurrency(params.data.value) + 
+                  params.data.name + ': ' +
+                  self.$options.filters.toCurrency(params.data.value) +
                   ' ('+ params.percent +'%)'
               }
           },
@@ -377,14 +383,14 @@ export default {
                   },
                   data: [
                     {
-                        value: this.getTotalSalesAmount(this.getTodaySales(this.bulacanSales)), 
+                        value: this.getTotalSalesAmount(this.getTodaySales(this.bulacanSales)),
                         name: 'Bulacan',
                         itemStyle: {
                             color: '#546bfa'
                         }
                     },
                     {
-                        value: this.getTotalSalesAmount(this.getTodaySales(this.caviteSales)), 
+                        value: this.getTotalSalesAmount(this.getTodaySales(this.caviteSales)),
                         name: 'Cavite',
                         itemStyle: {
                             color: '#3a9688'
@@ -422,18 +428,20 @@ export default {
         let milkTeaOrders = []
         this.activeOrders.forEach(order => {
           let orderList = JSON.parse(order.orderList)
-          orderList = orderList.filter(product => {
-            const productSize = this.productSizes.find(size => { 
-              return (size.name == product.productSize && size.name != 'Add On') 
+          orderList = orderList.filter(order => {
+            const product = this.allProducts.find(p => {
+              return p.productName == order.productName &&
+                p.productType == 'Milk Tea' &&
+                p.productCategory != 'Add Ons'
             })
-            return (productSize && productSize.product_type == 'Milk Tea')
+            return !!(product)
           })
           milkTeaOrders = [...milkTeaOrders, ...orderList.map(product => {
             let createdDate = order.createdDate
             if(!(createdDate instanceof Date)){
               createdDate = createdDate.toDate()
             }
-            return product = {
+            return {
               ...product,
               createdDate: createdDate,
               productPrice: this.getPriceFromProduct(product)
@@ -443,14 +451,16 @@ export default {
         return milkTeaOrders
       },
       snackSales() {
+        console.log(this.allProducts)
         let snackOrders = []
         this.activeOrders.forEach(order => {
           let orderList = JSON.parse(order.orderList)
-          orderList = orderList.filter(product => {
-            const productSize = this.productSizes.find(size => { 
-              return (size.name == product.productSize && size.name) 
+          orderList = orderList.filter(order => {
+            const product = this.allProducts.find(p => {
+              return p.productName == order.productName &&
+                p.productType == 'Snacks'
             })
-            return (productSize && productSize.product_type == 'Snacks')
+            return !!(product)
           })
           snackOrders = [...snackOrders, ...orderList.map(product => {
             let createdDate = order.createdDate
@@ -471,8 +481,13 @@ export default {
         let addOnOrders = []
         activeOrders.forEach(order => {
           let orderList = JSON.parse(order.orderList)
-          orderList = orderList.filter(product => {
-            return (product.productSize == 'Add On')
+          orderList = orderList.filter(order => {
+            const product = this.allProducts.find(p => {
+              return p.productName == order.productName &&
+                p.productType == 'Milk Tea' &&
+                p.productCategory == 'Add Ons'
+            })
+            return !!(product)
           })
           addOnOrders = [...addOnOrders, ...orderList.map(product => {
             let createdDate = order.createdDate
@@ -487,6 +502,31 @@ export default {
           })]
         })
         return addOnOrders
+      },
+      frappeSales() {
+        let frappeOrders = []
+        this.activeOrders.forEach(order => {
+          let orderList = JSON.parse(order.orderList)
+          orderList = orderList.filter(order => {
+            const product = this.allProducts.find(p => {
+              return p.productName == order.productName &&
+                p.productType == 'Frappe'
+            })
+            return !!(product)
+          })
+          frappeOrders = [...frappeOrders, ...orderList.map(product => {
+            let createdDate = order.createdDate
+            if(!(createdDate instanceof Date)){
+              createdDate = createdDate.toDate()
+            }
+            return {
+              ...product,
+              createdDate: createdDate,
+              productPrice: this.getPriceFromProduct(product)
+            }
+          })]
+        })
+        return frappeOrders
       },
       allActiveOrders() {
         return this.allOrders.filter(e => { return !(e.isDeleted) })

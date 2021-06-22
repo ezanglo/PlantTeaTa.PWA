@@ -6,7 +6,7 @@
       :columns="columns"
       row-key="name"
       :grid="true"
-      :filter="categoryFilter"  
+      :filter="categoryFilter"
       :pagination.sync="pagination"
       hide-header
       hide-bottom
@@ -23,7 +23,7 @@
                       <q-icon name="add_shopping_cart"/>
                       ADD TO CART
                     </div>
-                  </q-btn>  
+                  </q-btn>
                 </q-item-section>
               </q-item>
           </q-card>
@@ -133,8 +133,14 @@ export default {
     },
     async addToCart(product, price){
       try {
+        const product_category = this.productCategories.find(category => {
+          return category.categoryName == product.productCategory
+        });
+
         await this.addProductToCart({
           productName: product.productName,
+          productCategory: product.productCategory,
+          categoryOrder: product_category.order,
           productQuantity: 1,
           productSize: price.productSize
         })

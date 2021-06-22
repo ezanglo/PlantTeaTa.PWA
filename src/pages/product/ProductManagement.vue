@@ -5,13 +5,13 @@
       <q-table
         title="Product Management"
         class="my-sticky-column-table"
-        :data="allProducts"
+        :data="allProductStore"
         :hide-header="mode === 'grid'"
         :columns="columns"
         row-key="name"
         :grid="mode=='grid'"
         :filter="filter"
-        :filter-method="customFilter"  
+        :filter-method="customFilter"
         :pagination.sync="pagination"
       >
         <template v-slot:top-right="props">
@@ -37,14 +37,14 @@
             >{{props.inFullscreen ? 'Exit Fullscreen' : 'Toggle Fullscreen'}}
             </q-tooltip>
           </q-btn>
-          
+
           <q-select label="Types" v-model="filters.type" :options="productTypes" class="q-mr-sm" style="min-width:120px" dense clearable outlined />
           <q-select label="Categories" v-model="filters.category" :options="productCategories" option-value="categoryName" option-label="categoryName" style="min-width:120px" dense clearable outlined/>
         </template>
         <template v-slot:body-cell-price="props">
           <q-td :props="props" style="min-width:15em">
-            <q-select 
-              filled 
+            <q-select
+              filled
               value=''
               :label="props.row.productPrices.length + ' price(s)'"
               dense
@@ -85,15 +85,15 @@
         </template>
       </q-table>
     </q-card>
-    <q-dialog 
-      v-model="productDialog" 
+    <q-dialog
+      v-model="productDialog"
       persistent
-      :maximized="$q.screen.lt.sm?true:false" 
+      :maximized="$q.screen.lt.sm?true:false"
       transition-show="slide-left"
       transition-hide="slide-right"
       @before-hide="setBlur">
-        <product-settings 
-          :meta="currentProduct" 
+        <product-settings
+          :meta="currentProduct"
           :productCategories="productCategories"
           :productTypes="productTypes"
           :productSizes="productSizes"/>
@@ -119,7 +119,7 @@
         </q-card-section>
         <q-card-section class="q-pt-none">
           <q-item>
-            <q-select 
+            <q-select
               outlined
               color="primary"
               for="size"
@@ -231,8 +231,12 @@ export default {
       return {
         search: this.filters.search,
         type: this.filters.type,
-        category: this.filters.category       
+        category: this.filters.category
       }
+    },
+    allProductStore() {
+      console.log(typeof this.allProducts)
+      return this.allProducts
     },
     productDialog: {
       get () {
@@ -267,7 +271,7 @@ export default {
   },
   methods: {
     ...mapMutations('product', ['setProductDialog']),
-    ...mapActions('product', ['deleteProduct', 'addProductPrice', 'deleteProductPrice','getAllProducts', 
+    ...mapActions('product', ['deleteProduct', 'addProductPrice', 'deleteProductPrice','getAllProducts',
           'getProductCategories', 'getProductTypes', 'getProductPrices', 'getProductSizes']),
     async refresh(done) {
       await this.getAllProducts()
@@ -297,7 +301,7 @@ export default {
           await this.addProductPrice({
             productId: this.currentProduct.id,
             productPrice: this.addProductPriceAmount,
-            productSize: this.addProductPriceSize 
+            productSize: this.addProductPriceSize
           })
 
           this.addProductPriceDialog = false
@@ -315,7 +319,7 @@ export default {
           color: 'negative'
         })
       } finally {
-        
+
       }
     },
     showConfirmDialog (currentProduct) {
@@ -336,7 +340,7 @@ export default {
     customFilter(rows, terms){
       // rows contain the entire data
       // terms contains whatever you have as filter
-      
+
       const searchlc = terms.search ? terms.search.toLowerCase() : ""
 
       const filteredRows = rows.filter((row, i) => {
@@ -344,13 +348,13 @@ export default {
         let type_filter = (terms.type) && terms.type == row.productType
         let category_filter = (terms.category) && terms.category.categoryName == row.productCategory
         let search_filter = (searchlc) && row.productName.toLowerCase().includes(searchlc)
-        
+
         let match = (
-          !(terms.search) && 
-          !(terms.type) && 
+          !(terms.search) &&
+          !(terms.type) &&
           !(terms.category)
         )
-        
+
         if((!terms.search || search_filter) && (!terms.type || type_filter) && (!terms.category || category_filter)){
           match = true
         }

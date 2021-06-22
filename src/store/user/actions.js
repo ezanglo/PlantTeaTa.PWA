@@ -78,7 +78,7 @@ export const getCurrentUserCart = async function (context, id) {
 
 export const addProductToCart = async function (context, payload) {
   var product = context.state.currentUserCart.find(function(product){
-    return product.productName == payload.productName && 
+    return product.productName == payload.productName &&
           product.productSize == payload.productSize
   })
 
